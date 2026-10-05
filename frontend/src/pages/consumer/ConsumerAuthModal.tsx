@@ -98,6 +98,18 @@ export const ConsumerAuthModal: React.FC<ConsumerAuthModalProps> = ({
     return () => clearInterval(timer);
   }, [resendCooldown]);
 
+  // Reset modal state when closed
+  React.useEffect(() => {
+    if (!isOpen) {
+      setOtpStep(false);
+      setOtpCode('');
+      setPassword('');
+      setError(null);
+      setLoading(false);
+      setPendingSession(null);
+    }
+  }, [isOpen]);
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
@@ -113,73 +125,18 @@ export const ConsumerAuthModal: React.FC<ConsumerAuthModalProps> = ({
       return;
     }
 
+    const cleanEmail = email.trim().toLowerCase();
+
     setLoading(true);
     setError(null);
 
-    const cleanEmail = email.trim().toLowerCase();
-    let sessionResult: AuthSession | null = null;
-
-    if (emailMode === 'signin') {
-      try {
-        const { data: supaData, error: supaErr } = await supabase.auth.signInWithPassword({
-          email: cleanEmail,
-          password,
-        });
-
-        if (!supaErr && supaData?.user) {
-          sessionResult = await api.syncSupabaseUser({
-            supabase_id: supaData.user.id,
-            email: supaData.user.email,
-            display_name: supaData.user.user_metadata?.full_name || cleanEmail.split('@')[0],
-          });
-        } else {
-          // Fallback: sync with backend by deterministic email hash if Supabase auth credentials are mock/missing
-          const syntheticId = 'consumer_' + btoa(cleanEmail).replace(/=/g, '');
-          sessionResult = await api.syncSupabaseUser({
-            supabase_id: syntheticId,
-            email: cleanEmail,
-            display_name: cleanEmail.split('@')[0],
-          });
-        }
-      } catch (err: any) {
-        setError(err?.message || 'Email authentication failed. Please check your credentials.');
-        setLoading(false);
-        return;
-      }
-    } else {
-      // Sign up mode
-      try {
-        const { data: supaData, error: supaErr } = await supabase.auth.signUp({
-          email: cleanEmail,
-          password,
-          options: {
-            data: { full_name: fullName.trim(), role: 'consumer' },
-          },
-        });
-
-        const userId = supaData?.user?.id || 'consumer_' + btoa(cleanEmail).replace(/=/g, '');
-        sessionResult = await api.syncSupabaseUser({
-          supabase_id: userId,
-          email: cleanEmail,
-          display_name: fullName.trim(),
-        });
-      } catch (err: any) {
-        setError(err?.message || 'Registration failed. Please try again.');
-        setLoading(false);
-        return;
-      }
-    }
-
-    // Trigger OTP Flow instead of completing login
-    if (sessionResult) {
-      try {
-        await api.sendEmailOtp(cleanEmail);
-        setPendingSession(sessionResult);
-        setOtpStep(true);
-        setResendCooldown(30); // 30s cooldown
-      } catch (err: any) {
-        setError(err?.message || 'Failed to send OTP.');
-      }
+    // Trigger OTP Flow BEFORE Supabase authentication
+    try {
+      await api.sendEmailOtp(cleanEmail);
+      setOtpStep(true);
+      setResendCooldown(30);
+    } catch (err: any) {
+      setError(err?.message || 'Failed to send OTP.');
     }
     setLoading(false);
   };
@@ -193,12 +150,41 @@ export const ConsumerAuthModal: React.FC<ConsumerAuthModalProps> = ({
     
     setLoading(true);
     setError(null);
+    const cleanEmail = email.trim().toLowerCase();
+
     try {
-      await api.verifyEmailOtp(email.trim().toLowerCase(), otpCode, pendingSession!.token);
-      if (onSuccess) onSuccess(pendingSession!);
+      // 1. Verify OTP with our backend first
+      // Pass a dummy session_token if pendingSession is not set yet
+      await api.verifyEmailOtp(cleanEmail, otpCode, pendingSession?.token || 'temp-token');
+      
+      // 2. ONLY if OTP is correct, authenticate with Supabase
+      if (emailMode === 'signin') {
+        const { data: supaData, error: supaErr } = await supabase.auth.signInWithPassword({
+          email: cleanEmail,
+          password,
+        });
+
+        if (supaErr) throw new Error('Invalid credentials. Please check your password.');
+      } else {
+        const { data: supaData, error: supaErr } = await supabase.auth.signUp({
+          email: cleanEmail,
+          password,
+          options: {
+            data: { full_name: fullName.trim(), role: 'consumer' },
+          },
+        });
+        if (supaErr) throw new Error('Registration failed.');
+      }
+      
+      // 3. The global Supabase auth listener in App.tsx will automatically close the modal and update state.
+      // However, we explicitly call onClose here as a fallback to ensure the UI updates instantly.
+      if (onSuccess && pendingSession) {
+        onSuccess(pendingSession);
+      }
       onClose();
+
     } catch (err: any) {
-      setError(err?.message || 'Invalid OTP. Please try again.');
+      setError(err?.message || 'Verification failed. Please check your OTP or password.');
     } finally {
       setLoading(false);
     }

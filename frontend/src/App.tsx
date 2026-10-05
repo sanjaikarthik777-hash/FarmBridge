@@ -575,6 +575,7 @@ export function App() {
                 onOpenAuthModal={() => setIsAuthModalOpen(true)}
                 onOpenCart={() => setIsCartOpen(true)}
                 cartCount={cart.items.reduce((sum, item) => sum + item.quantity, 0)}
+                onNavigateToProfile={() => handleNavigateTab('profile')}
               />
             )}
             
@@ -693,12 +694,22 @@ export function App() {
                       ? 'Sign in to manage your delivery locations, preferences, and verified consumer profile.'
                       : 'உங்கள் விநியோக முகவரிகள் மற்றும் சுயவிவரத்தை நிர்வகிக்க உள்நுழையவும்.'}
                   </p>
-                  <button
-                    onClick={() => setIsAuthModalOpen(true)}
-                    className="px-6 py-2.5 bg-[#1F6B45] hover:bg-[#185336] text-white text-xs font-bold rounded-2xl shadow-md transition-all cursor-pointer"
-                  >
-                    {lang === 'en' ? 'Continue with Google' : 'Google மூலம் உள்நுழைக'}
-                  </button>
+                  <div className="flex flex-col items-center gap-3 mt-2">
+                    <button
+                      onClick={() => setIsAuthModalOpen(true)}
+                      className="px-6 py-2.5 bg-[#1F6B45] hover:bg-[#185336] text-white text-xs font-bold rounded-2xl shadow-md transition-all cursor-pointer w-full max-w-xs"
+                    >
+                      {lang === 'en' ? 'Sign In / Register' : 'உள்நுழைக'}
+                    </button>
+                    
+                    {/* Fallback Sign Out for zombie sessions */}
+                    <button
+                      onClick={handleLogout}
+                      className="px-6 py-2 text-rose-600 hover:bg-rose-50 text-[11px] font-bold rounded-xl transition-all cursor-pointer"
+                    >
+                      {lang === 'en' ? 'Clear Stuck Session (Sign Out)' : 'வெளியேறு'}
+                    </button>
+                  </div>
                 </div>
               )
             )}

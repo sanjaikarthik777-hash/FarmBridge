@@ -29,6 +29,7 @@ interface ConsumerHomeProps {
   onOpenAuthModal?: () => void;
   onOpenCart?: () => void;
   cartCount?: number;
+  onNavigateToProfile?: () => void;
 }
 
 export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
@@ -51,6 +52,7 @@ export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
   onOpenAuthModal,
   onOpenCart,
   cartCount = 0,
+  onNavigateToProfile,
 }) => {
   const [scrolled, setScrolled] = useState(false);
 
@@ -127,7 +129,7 @@ export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
               </button>
 
               <button 
-                onClick={onOpenAuthModal}
+                onClick={() => currentProfile && onNavigateToProfile ? onNavigateToProfile() : onOpenAuthModal?.()}
                 className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#202820] text-white text-xs font-bold hover:bg-[#245C3A] hover:shadow-lg hover:shadow-[#245C3A]/20 transition-all duration-300"
               >
                 {currentProfile ? currentProfile.display_name : 'Profile'}
@@ -555,44 +557,17 @@ export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
               </button>
             </div>
 
-            {/* Stylized Map Area */}
-            <div className="bg-[#EAF3E7] relative overflow-hidden min-h-[400px]">
-              {/* Minimalist abstract map background */}
-              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M54.627 0l.83.83v58.34h-58.34l-.83-.83v-58.34h58.34zm-52.96 5.66v48.68h48.68v-48.68h-48.68z\' fill=\'%23245C3A\' fill-opacity=\'1\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")' }} />
-              
-              {/* Animated YOU marker */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center">
-                <div className="relative flex items-center justify-center w-12 h-12">
-                  <div className="absolute inset-0 rounded-full bg-[#1F6B45] opacity-20 animate-ping" />
-                  <div className="w-4 h-4 bg-[#1F6B45] rounded-full shadow-lg ring-4 ring-white" />
-                </div>
-                <span className="bg-white px-3 py-1 rounded-full text-[10px] font-bold text-[#202820] shadow-md mt-1">YOU</span>
-              </div>
-
-              {/* Floating Farm Markers */}
-              <div className="absolute top-[20%] left-[30%] flex flex-col items-center animate-[float_5s_ease-in-out_infinite]">
-                <div className="w-10 h-10 bg-white rounded-full p-1 shadow-xl relative z-10 border-2 border-[#75A85A]">
-                  <img src="https://images.unsplash.com/photo-1560416313-414b33c856a9?w=100&auto=format&fit=crop" className="w-full h-full rounded-full object-cover" alt="Farm" />
-                </div>
-                <div className="w-1 h-4 bg-[#75A85A] -mt-1" />
-                <span className="bg-[#202820] text-white px-2 py-0.5 rounded text-[8px] font-bold mt-1">Arun's Farm</span>
-              </div>
-
-              <div className="absolute bottom-[30%] right-[25%] flex flex-col items-center animate-[float_6s_ease-in-out_infinite_1s]">
-                <div className="w-10 h-10 bg-white rounded-full p-1 shadow-xl relative z-10 border-2 border-[#75A85A]">
-                  <img src="https://images.unsplash.com/photo-1595435012529-65b16e45f942?w=100&auto=format&fit=crop" className="w-full h-full rounded-full object-cover" alt="Farm" />
-                </div>
-                <div className="w-1 h-4 bg-[#75A85A] -mt-1" />
-                <span className="bg-[#202820] text-white px-2 py-0.5 rounded text-[8px] font-bold mt-1">Fresh Farm</span>
-              </div>
-
-              <div className="absolute top-[40%] right-[15%] flex flex-col items-center animate-[float_4s_ease-in-out_infinite_2s]">
-                <div className="w-8 h-8 bg-white rounded-full p-1 shadow-xl relative z-10 border-2 border-[#75A85A]">
-                  <Leaf className="w-full h-full text-[#367B4B] p-1" />
-                </div>
-                <div className="w-1 h-4 bg-[#75A85A] -mt-1" />
-                <span className="bg-[#202820] text-white px-2 py-0.5 rounded text-[8px] font-bold mt-1">Organic Farm</span>
-              </div>
+            {/* Google Map Area */}
+            <div className="bg-gray-100 relative overflow-hidden min-h-[400px] lg:min-h-full">
+              <iframe 
+                width="100%" 
+                height="100%" 
+                frameBorder="0" 
+                style={{ border: 0, minHeight: '400px', height: '100%' }} 
+                src="https://maps.google.com/maps?q=Pollachi&t=&z=12&ie=UTF8&iwloc=&output=embed" 
+                allowFullScreen
+                title="Google Map of Pollachi Farms"
+              ></iframe>
             </div>
           </div>
         </div>

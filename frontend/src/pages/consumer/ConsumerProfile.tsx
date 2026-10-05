@@ -346,15 +346,25 @@ export const ConsumerProfile: React.FC<ConsumerProfileProps> = ({
         )}
       </div>
 
-      {/* Logout Action */}
-      <div className="pt-2 flex justify-end">
+      {/* Logout Action (Swiggy / Zepto Style) */}
+      <div className="pt-6">
         <button
           type="button"
           onClick={onLogout}
-          className="px-6 py-3 rounded-2xl border border-rose-200 text-rose-600 hover:bg-rose-50 text-xs font-bold transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
+          className="w-full p-4.5 rounded-3xl border border-rose-200 bg-white hover:bg-rose-50 flex items-center justify-between text-left transition-all group cursor-pointer shadow-sm"
         >
-          <LogOut className="w-4 h-4" />
-          <span>Sign Out from FarmBridge</span>
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center text-rose-600 group-hover:scale-110 transition-transform">
+              <LogOut className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-sm font-extrabold text-rose-600">Sign Out</div>
+              <div className="text-xs text-[#778177] mt-0.5">Securely log out of FarmBridge</div>
+            </div>
+          </div>
+          <div className="w-8 h-8 rounded-full border border-rose-100 flex items-center justify-center text-rose-300 group-hover:text-rose-500 group-hover:border-rose-300 transition-colors">
+            <LogOut className="w-4 h-4" />
+          </div>
         </button>
       </div>
     </div>
