@@ -147,6 +147,7 @@ export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
       {/* --- HERO SECTION --- */}
       <section className="relative w-screen min-h-[90vh] flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#245C3A]">
         {/* Cinematic Background Image */}
+        {/* Cinematic Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-[1.02] transform transition-transform duration-[20s] ease-linear hover:scale-110"
           style={{
@@ -204,25 +205,19 @@ export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
             </div>
           </div>
           
-          {/* Floating UI Elements Side */}
-          <div className="hidden lg:block lg:col-span-5 relative h-[600px] pointer-events-none">
-            {/* Glowing orb */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[#75A85A]/30 rounded-full blur-[100px]" />
-
-            {/* Central Hero Image */}
-            <div className="absolute top-4 bottom-12 right-0 left-8 rounded-[3rem] overflow-hidden shadow-[0_30px_60px_rgba(32,40,32,0.4)] border border-white/10 animate-in fade-in slide-in-from-right-8 duration-1000 delay-500 z-10 group">
+          {/* Right Side - Clean Farmer Image */}
+          <div className="hidden lg:flex lg:col-span-5 flex-col items-center justify-center relative animate-in fade-in slide-in-from-right-8 duration-1000 delay-500">
+            <div className="w-full max-w-[400px] aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl">
               <img 
                 src="/hero-farmer.png" 
-                alt="Young Farmer with Basket" 
-                className="w-full h-full object-cover transition-transform duration-[2000ms] group-hover:scale-105"
+                alt="Village Farmer with Basket" 
+                className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#202820]/60 via-transparent to-transparent opacity-80" />
             </div>
-
-            {/* Aesthetic Typography: THOPPUKARAN */}
-            <div className="absolute bottom-2 right-4 z-20 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-700 pointer-events-none">
-              <h2 className="text-5xl lg:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[#F8F8F2] to-[#C4DFC0]/50 tracking-tighter drop-shadow-2xl">
-                THOPPUKARAN<span className="text-[#75A85A]">.</span>
+            {/* THOPPUKARAN below the image */}
+            <div className="mt-6 text-center">
+              <h2 className="text-4xl font-black text-white tracking-widest drop-shadow-lg uppercase">
+                THOPPUKARAN
               </h2>
             </div>
           </div>
