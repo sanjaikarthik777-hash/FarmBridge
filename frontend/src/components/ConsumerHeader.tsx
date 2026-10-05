@@ -75,6 +75,16 @@ export const ConsumerHeader: React.FC<ConsumerHeaderProps> = ({
   const profileDropdownRef = useRef<HTMLDivElement>(null);
   const categoriesDropdownRef = useRef<HTMLDivElement>(null);
 
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Close dropdowns on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -117,66 +127,35 @@ export const ConsumerHeader: React.FC<ConsumerHeaderProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#E5E9E1] shadow-xs">
-      {/* Top Banner: Regional Guarantee & Pilot Locality */}
-      <div className="bg-[#245C3A] text-white text-[11px] py-1.5 px-4 hidden md:block">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="font-bold flex items-center gap-1.5 text-[#EAF3E7]">
-              <Sparkles className="w-3.5 h-3.5 text-[#75A85A]" />
-              <span>
-                {lang === 'en'
-                  ? 'Fresh Morning Harvest • 100% Direct Farmer Payout'
-                  : 'காலை அறுவடை • விவசாயிகளுக்கு முழு வருமானம்'}
-              </span>
-            </span>
-            <span className="text-[#75A85A]">•</span>
-            <span className="text-emerald-100/90">{t.pilot_area}</span>
-          </div>
-
-          <div className="flex items-center gap-3 text-emerald-100/90">
-            <span>{t.disclosed_fee_badge}</span>
-            <span>•</span>
-            <span>Uzhavar Sandhai Daily Price Match</span>
-            {onNavigateToFarmer && (
-              <>
-                <span>•</span>
-                <button
-                  type="button"
-                  onClick={onNavigateToFarmer}
-                  className="bg-white/15 hover:bg-white/25 text-white font-bold px-2.5 py-0.5 rounded-full transition-all flex items-center gap-1 cursor-pointer text-[11px]"
-                >
-                  <span>🚜 Farmer Portal →</span>
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
+    <nav 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        scrolled ? 'py-3' : 'py-6'
+      }`}
+    >
       {/* Main Header Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-18 gap-2 sm:gap-4">
+        <div 
+          className={`flex items-center justify-between mx-auto transition-all duration-500 ease-out bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(36,92,58,0.08)] ${
+            scrolled ? 'rounded-2xl px-4 sm:px-6 py-2.5 max-w-5xl border border-white/60' : 'rounded-3xl px-4 sm:px-8 py-3.5 max-w-7xl border border-white/40'
+          }`}
+        >
           {/* Logo & Tagline */}
           <div
             className="flex items-center space-x-3 cursor-pointer shrink-0"
             onClick={() => onSelectTab('home')}
           >
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-[#245C3A] flex items-center justify-center text-white shadow-md shadow-[#245C3A]/20 transition-transform hover:scale-105">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-[#245C3A] to-[#1F6B45] flex items-center justify-center text-white shadow-md shadow-[#245C3A]/20 transition-transform hover:scale-105">
               <Sprout className="w-6 h-6 text-[#75A85A]" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-lg sm:text-xl font-extrabold tracking-tight text-[#245C3A]">
+                <span className="text-lg sm:text-xl font-extrabold tracking-tight text-[#202820]">
                   Farm<span className="text-[#367B4B]">Bridge</span>
                 </span>
-                <span className="hidden sm:inline-flex text-[10px] font-bold bg-[#EAF3E7] text-[#245C3A] px-2 py-0.5 rounded-full border border-[#C4DFC0]">
+                <span className="hidden sm:inline-flex text-[10px] font-bold bg-[#EAF3E7]/80 text-[#245C3A] px-2 py-0.5 rounded-full border border-[#C4DFC0]">
                   Consumer
                 </span>
               </div>
-              <p className="text-[11px] text-[#778177] hidden lg:block font-medium truncate max-w-[210px]">
-                {t.tagline}
-              </p>
             </div>
           </div>
 
@@ -493,7 +472,7 @@ export const ConsumerHeader: React.FC<ConsumerHeaderProps> = ({
         </div>
 
         {/* Mobile Search Bar Row (Visible on small screens) */}
-        <div className="py-2 pb-3 md:hidden">
+        <div className={`py-2 pb-3 md:hidden transition-all duration-300 ${scrolled ? 'opacity-0 h-0 overflow-hidden py-0 pb-0' : 'opacity-100'}`}>
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#778177]" />
             <input
@@ -502,7 +481,7 @@ export const ConsumerHeader: React.FC<ConsumerHeaderProps> = ({
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleSearchKeyPress}
               placeholder={t.search_placeholder}
-              className="w-full pl-10 pr-9 py-2 rounded-2xl bg-[#F8F8F2] border border-[#E5E9E1] text-xs font-medium text-[#202820] placeholder-[#778177] focus:bg-white focus:border-[#367B4B] focus:outline-hidden"
+              className="w-full pl-10 pr-9 py-2 rounded-2xl bg-white/60 backdrop-blur-md border border-white/40 text-xs font-medium text-[#202820] placeholder-[#778177] focus:bg-white focus:border-[#367B4B] focus:outline-hidden"
             />
             {searchQuery && (
               <button
@@ -516,6 +495,6 @@ export const ConsumerHeader: React.FC<ConsumerHeaderProps> = ({
           </div>
         </div>
       </div>
-    </header>
+    </nav>
   );
 };

@@ -35,7 +35,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const t = translations[lang];
   const isOutOfStock = product.available_quantity <= 0 || product.status === 'sold_out';
-  const isLowStock = product.available_quantity > 0 && product.available_quantity <= 5;
   const isPaused = product.status === 'paused';
 
   const defaultImg =
@@ -44,147 +43,97 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       : 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&auto=format&fit=crop';
 
   return (
-    <div className="group bg-white rounded-3xl border border-[#E5E9E1] hover:border-[#75A85A] hover:shadow-xl hover:shadow-[#245C3A]/5 transition-all duration-300 flex flex-col overflow-hidden relative">
-      {/* Image & Badges Container */}
-      <div
-        className="relative aspect-4/3 bg-[#F8F8F2] overflow-hidden cursor-pointer"
-        onClick={() => onSelectProduct(product)}
-      >
-        <img
-          src={defaultImg}
-          alt={product.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-          loading="lazy"
-        />
+    <div 
+      onClick={() => onSelectProduct(product)}
+      className="group relative rounded-[2rem] overflow-hidden bg-white cursor-pointer transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-2 hover:shadow-[0_20px_40px_rgb(36,92,58,0.12)] min-h-[340px] w-full flex flex-col"
+    >
+      <img 
+        src={defaultImg} 
+        alt={product.name}
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
+      />
+      
+      {/* Dark overlay for contrast */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#202820]/90 via-[#202820]/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+      
+      {/* Subtle green glow on hover */}
+      <div className="absolute inset-0 bg-[#245C3A]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
 
-        {/* Subtle Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/10 pointer-events-none" />
-
-        {/* Top Badges: Distance & Wishlist */}
-        <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
-          {product.distance_km !== undefined ? (
-            <span className="bg-white/95 backdrop-blur-md text-[#245C3A] text-[11px] font-bold px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1">
-              <MapPin className="w-3 h-3 text-[#367B4B]" />
-              {product.distance_km < 1 ? '< 1 km' : `${product.distance_km.toFixed(1)} km`}
-            </span>
-          ) : (
-            <span className="bg-white/90 backdrop-blur-md text-[#778177] text-[10px] font-semibold px-2 py-0.5 rounded-full">
-              📍 Pollachi
-            </span>
-          )}
-
-          {/* Wishlist Button */}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleWishlist?.(product.id);
-            }}
-            className="pointer-events-auto w-8 h-8 rounded-full bg-white/95 backdrop-blur-md hover:bg-white text-gray-400 hover:text-rose-500 flex items-center justify-center shadow-xs transition-all active:scale-90 cursor-pointer"
-            title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
-            aria-label="Wishlist"
-          >
-            <Heart
-              className={`w-4 h-4 transition-colors ${
-                isWishlisted ? 'fill-rose-500 text-rose-500' : 'text-gray-500 hover:text-rose-500'
-              }`}
-            />
-          </button>
-        </div>
-
-        {/* Bottom Harvest Freshness Badge */}
-        <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1.5 pointer-events-none">
-          <span className="bg-[#245C3A]/90 backdrop-blur-md text-[#EAF3E7] text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-white/20 flex items-center gap-1">
-            <Sparkles className="w-2.5 h-2.5 text-[#75A85A]" />
-            <span>{lang === 'en' ? 'Fresh Morning Harvest' : 'காலை அறுவடை'}</span>
+      {/* Top badges */}
+      <div className="absolute top-5 left-5 flex flex-col gap-2 pointer-events-none">
+        {product.distance_km !== undefined ? (
+          <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-white text-[9px] font-black uppercase tracking-widest border border-white/20 shadow-xs">
+            <MapPin className="w-2.5 h-2.5 inline mr-1" />
+            {product.distance_km < 1 ? '< 1 km' : `${product.distance_km.toFixed(1)} km`}
           </span>
-        </div>
+        ) : (
+          <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-white text-[9px] font-black uppercase tracking-widest border border-white/20 shadow-xs">
+            📍 Pollachi
+          </span>
+        )}
+        
+        {isOutOfStock || isPaused ? (
+           <span className="px-3 py-1 bg-red-500/80 backdrop-blur-md rounded-full text-white text-[9px] font-black uppercase tracking-widest border border-white/20 shadow-xs self-start">
+             {isPaused ? 'Paused' : 'Sold Out'}
+           </span>
+        ) : null}
       </div>
 
-      {/* Content Container */}
-      <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-        {/* Farm & Produce Title */}
-        <div className="space-y-1">
-          <div className="flex items-center justify-between text-[11px] text-[#778177]">
-            <span className="font-semibold text-[#367B4B] hover:text-[#245C3A] cursor-pointer truncate max-w-[170px]">
-              {product.farm_name || 'Pollachi Family Farm'}
-            </span>
-            {isLowStock && !isOutOfStock && (
-              <span className="text-amber-700 font-bold text-[10px] bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                Only {product.available_quantity} {product.unit} left
-              </span>
-            )}
+      <div className="absolute top-5 right-5 z-10 pointer-events-auto">
+        <button 
+          onClick={(e) => { e.stopPropagation(); onToggleWishlist?.(product.id); }}
+          className={`w-10 h-10 rounded-full backdrop-blur-md border border-white/20 flex items-center justify-center transition-all duration-500 shadow-xs ${isWishlisted ? 'bg-rose-500 border-rose-500 text-white' : 'bg-white/10 text-white hover:bg-white hover:text-rose-500 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0'}`}
+        >
+          <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-current' : ''}`} />
+        </button>
+      </div>
+
+      {/* Bottom Content Area */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out z-10">
+        <p className="text-emerald-300 text-[11px] font-bold mb-1 tracking-wide uppercase line-clamp-1">{product.farm_name || 'Family Farm'}</p>
+        <h3 className="text-white text-xl sm:text-2xl font-black tracking-tight leading-tight mb-4 line-clamp-2">
+          {lang === 'ta' && product.name_ta ? product.name_ta : product.name}
+        </h3>
+        
+        <div className="flex items-center justify-between pointer-events-none group-hover:pointer-events-auto">
+          <div className="text-white font-bold text-xl drop-shadow-md">
+            ₹{product.price} <span className="text-xs font-medium text-emerald-100/70">/ {product.unit}</span>
           </div>
-
-          <h4
-            onClick={() => onSelectProduct(product)}
-            className="font-bold text-sm text-[#202820] group-hover:text-[#245C3A] transition-colors cursor-pointer line-clamp-1"
-          >
-            {lang === 'ta' && product.name_ta ? product.name_ta : product.name}
-          </h4>
-
-          {lang === 'ta' && product.name_ta && (
-            <p className="text-[11px] text-[#778177] truncate">{product.name}</p>
-          )}
-        </div>
-
-        {/* Pricing & Cart Action */}
-        <div className="pt-2 border-t border-[#E5E9E1] flex items-center justify-between">
-          <div>
-            <div className="flex items-baseline gap-1">
-              <span className="text-base font-extrabold text-[#245C3A]">
-                ₹{product.price.toFixed(0)}
-              </span>
-              <span className="text-xs text-[#778177] font-medium">/{product.unit}</span>
-            </div>
-            <p className="text-[10px] text-[#367B4B] font-semibold flex items-center gap-0.5">
-              <ShieldCheck className="w-3 h-3 inline text-[#75A85A]" />
-              100% direct payout
-            </p>
-          </div>
-
-          {/* Cart Stepper or Add Button */}
-          <div>
-            {isOutOfStock || isPaused ? (
-              <span className="px-3 py-1.5 bg-[#F8F8F2] text-[#778177] rounded-xl text-xs font-bold border border-[#E5E9E1]">
-                {isPaused ? 'Paused' : t.out_of_stock}
-              </span>
-            ) : cartQuantity > 0 ? (
-              <div className="flex items-center bg-[#EAF3E7] rounded-xl p-1 border border-[#C4DFC0]">
+          
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 pointer-events-auto">
+            {isOutOfStock || isPaused ? null : cartQuantity > 0 ? (
+              <div className="flex items-center bg-white/90 backdrop-blur-md rounded-full p-1 border border-white/20 shadow-lg">
                 <button
                   type="button"
-                  onClick={() => {
-                    if (cartQuantity === 1) {
-                      onUpdateCartQuantity?.(product.id, 0);
-                    } else {
-                      onUpdateCartQuantity?.(product.id, cartQuantity - 1);
-                    }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (cartQuantity === 1) onUpdateCartQuantity?.(product.id, 0);
+                    else onUpdateCartQuantity?.(product.id, cartQuantity - 1);
                   }}
-                  className="w-7 h-7 rounded-lg bg-white text-[#245C3A] flex items-center justify-center hover:bg-[#dbeed7] transition-colors shadow-2xs font-bold cursor-pointer"
-                  aria-label="Decrease quantity"
+                  className="w-8 h-8 rounded-full bg-[#EAF3E7] text-[#245C3A] flex items-center justify-center hover:bg-white transition-colors"
                 >
-                  <Minus className="w-3.5 h-3.5" />
+                  <Minus className="w-4 h-4" />
                 </button>
-                <span className="w-7 text-center font-extrabold text-xs text-[#245C3A]">
+                <span className="w-8 text-center font-black text-sm text-[#202820]">
                   {cartQuantity}
                 </span>
                 <button
                   type="button"
-                  onClick={() => onUpdateCartQuantity?.(product.id, cartQuantity + 1)}
-                  className="w-7 h-7 rounded-lg bg-[#245C3A] text-white flex items-center justify-center hover:bg-[#1b452b] transition-colors shadow-2xs font-bold cursor-pointer"
-                  aria-label="Increase quantity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onUpdateCartQuantity?.(product.id, cartQuantity + 1);
+                  }}
+                  className="w-8 h-8 rounded-full bg-[#245C3A] text-white flex items-center justify-center hover:bg-[#1F6B45] transition-colors"
                 >
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-4 h-4" />
                 </button>
               </div>
             ) : (
-              <button
-                type="button"
-                onClick={() => onAddToCart(product.id, product.minimum_order_quantity || 1)}
-                className="flex items-center gap-1.5 px-3.5 py-2 bg-[#245C3A] hover:bg-[#1b452b] text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95 cursor-pointer"
+              <button 
+                onClick={(e) => { e.stopPropagation(); onAddToCart(product.id, product.minimum_order_quantity || 1); }}
+                className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#245C3A] hover:bg-[#EAF3E7] transition-transform hover:scale-110 shadow-xl"
               >
-                <ShoppingCart className="w-3.5 h-3.5" />
-                <span>{t.add_to_cart}</span>
+                <ShoppingCart className="w-5 h-5" />
               </button>
             )}
           </div>

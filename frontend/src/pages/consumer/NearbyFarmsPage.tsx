@@ -278,69 +278,49 @@ export const NearbyFarmsPage: React.FC<NearbyFarmsPageProps> = ({
             ))}
           </div>
 
-          {/* Demo Farm Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {nearbyFarms.map((farm, idx) => (
-              <div
-                key={farm.id}
+              <div 
+                key={farm.id} 
                 onClick={() => handleSelectFarm(farm.id)}
-                className="group bg-white rounded-3xl border border-[#E5E9E1] hover:border-[#75A85A] hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer"
+                className="group cursor-pointer"
               >
-                <div>
-                  {/* Farm Image Banner */}
-                  <div className="relative aspect-16/9 bg-[#F8F8F2] overflow-hidden">
-                    <img
-                      src={getFarmCoverImage(idx)}
-                      alt={farm.farm_name}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src =
-                          'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800&auto=format&fit=crop';
-                      }}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
-
-                    {/* Distance Badge */}
-                    {farm.distance_km !== undefined && (
-                      <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-md text-[#245C3A] text-xs font-bold px-2.5 py-1 rounded-full shadow-xs flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5 text-[#367B4B]" />
-                        <span>{farm.distance_km.toFixed(1)} km</span>
+                <div className="w-full aspect-[4/5] rounded-[2.5rem] overflow-hidden relative mb-4">
+                  <img 
+                    src={getFarmCoverImage(idx)} 
+                    className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
+                    alt={farm.farm_name}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#202820]/90 via-[#202820]/20 to-transparent opacity-90 transition-opacity duration-500" />
+                  <div className="absolute inset-0 bg-[#245C3A]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
+                  
+                  {/* Distance Badge */}
+                  {farm.distance_km !== undefined && (
+                    <div className="absolute top-5 left-5">
+                      <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-white text-[9px] font-black uppercase tracking-widest border border-white/20 shadow-xs flex items-center gap-1">
+                        <MapPin className="w-2.5 h-2.5" />
+                        {farm.distance_km < 1 ? '< 1 km' : `${farm.distance_km.toFixed(1)} km`}
                       </span>
-                    )}
-
-                    <span className="absolute bottom-3 left-3 bg-[#245C3A]/90 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                      Demo Listing
-                    </span>
-                  </div>
-
-                  {/* Card Content */}
-                  <div className="p-5 space-y-2">
-                    <h3 className="text-base font-bold text-[#202820] group-hover:text-[#245C3A] transition-colors">
-                      {farm.farm_name}
-                    </h3>
-
-                    <p className="text-xs text-[#778177] line-clamp-2">
-                      {farm.description || 'Dedicated family grove practicing natural agriculture and direct local harvest.'}
-                    </p>
-
-                    <div className="pt-1 flex items-center gap-2 text-[11px] text-[#778177]">
-                      <span>📍 {farm.village || 'Pollachi Rural'}</span>
-                      <span>•</span>
-                      <span>{farm.region || 'Coimbatore District'}</span>
                     </div>
+                  )}
+                  
+                  <div className="absolute bottom-6 left-6 right-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+                    <p className="text-[#75A85A] text-[11px] font-bold mb-1 uppercase tracking-wider">{farm.village || 'Pollachi'}</p>
+                    <h3 className="text-2xl sm:text-3xl font-black text-white mb-2 tracking-tight leading-tight">{farm.farm_name}</h3>
+                    <p className="text-emerald-100/80 text-xs line-clamp-2 pr-4">{farm.description || 'Dedicated family grove practicing natural agriculture and direct local harvest.'}</p>
                   </div>
                 </div>
 
-                {/* Card Footer */}
-                <div className="px-5 py-3.5 border-t border-[#E5E9E1] bg-[#F8F8F2] flex items-center justify-between text-xs">
-                  <span className="text-[#367B4B] font-bold flex items-center gap-1">
-                    <Sprout className="w-3.5 h-3.5" />
-                    <span>{farm.products_count || 'Fresh'} crops</span>
-                  </span>
-                  <span className="text-[#245C3A] font-extrabold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                    <span>View Farm Profile</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </span>
+                <div className="px-4 flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-1.5 text-sm font-bold text-[#202820]">
+                      <Sprout className="w-4 h-4 text-[#367B4B]" />
+                      {farm.products_count || 12} Fresh Crops
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 rounded-full border border-[#E5E9E1] flex items-center justify-center group-hover:bg-[#202820] group-hover:text-white group-hover:border-[#202820] transition-colors shadow-xs">
+                    <ArrowRight className="w-4 h-4 -rotate-45" />
+                  </div>
                 </div>
               </div>
             ))}

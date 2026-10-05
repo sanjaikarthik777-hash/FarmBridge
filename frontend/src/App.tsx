@@ -501,31 +501,33 @@ export function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F8F2] text-[#202820]">
-      {/* Consumer Header */}
-      <ConsumerHeader
-        currentProfile={currentProfile}
-        activeLocation={activeLocation}
-        onOpenLocationModal={() => setIsLocationModalOpen(true)}
-        lang={lang}
-        onToggleLang={setLang}
-        activeTab={activeTab}
-        onSelectTab={handleNavigateTab}
-        cartCount={cart.items.reduce((sum, item) => sum + item.quantity, 0)}
-        onOpenCart={() => setIsCartOpen(true)}
-        wishlistCount={wishlistIds.length}
-        onOpenWishlist={() => handleNavigateTab('wishlist')}
-        unreadNotificationsCount={unreadNotificationsCount}
-        onOpenNotifications={() => setIsNotificationsOpen(true)}
-        onLogout={handleLogout}
-        onOpenAuthModal={() => setIsAuthModalOpen(true)}
-        categories={categories}
-        products={products}
-        onSelectProduct={(p) => setSelectedProduct(p)}
-        onSearchSubmit={() => {
-          handleNavigateTab('catalogue');
-        }}
-        onNavigateToFarmer={handleNavigateToFarmer}
-      />
+      {/* Consumer Header - Hidden on home for custom hero header */}
+      {activeTab !== 'home' && (
+        <ConsumerHeader
+          currentProfile={currentProfile}
+          activeLocation={activeLocation}
+          onOpenLocationModal={() => setIsLocationModalOpen(true)}
+          lang={lang}
+          onToggleLang={setLang}
+          activeTab={activeTab}
+          onSelectTab={handleNavigateTab}
+          cartCount={cart.items.reduce((sum, item) => sum + item.quantity, 0)}
+          onOpenCart={() => setIsCartOpen(true)}
+          wishlistCount={wishlistIds.length}
+          onOpenWishlist={() => handleNavigateTab('wishlist')}
+          unreadNotificationsCount={unreadNotificationsCount}
+          onOpenNotifications={() => setIsNotificationsOpen(true)}
+          onLogout={handleLogout}
+          onOpenAuthModal={() => setIsAuthModalOpen(true)}
+          categories={categories}
+          products={products}
+          onSelectProduct={(p) => setSelectedProduct(p)}
+          onSearchSubmit={() => {
+            handleNavigateTab('catalogue');
+          }}
+          onNavigateToFarmer={handleNavigateToFarmer}
+        />
+      )}
 
       {/* Toast Notification */}
       {toastMessage && (
@@ -535,7 +537,7 @@ export function App() {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
+      <main className={`flex-1 w-full ${activeTab === 'home' ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-28 md:pb-12'}`}>
         {loading ? (
           <div className="py-24 text-center space-y-3">
             <div className="w-10 h-10 border-4 border-[#1F6B45] border-t-transparent rounded-full animate-spin mx-auto" />
@@ -569,9 +571,13 @@ export function App() {
                   setSelectedFarmId(farmId);
                   handleNavigateTab('nearby_farms');
                 }}
+                currentProfile={currentProfile}
+                onOpenAuthModal={() => setIsAuthModalOpen(true)}
+                onOpenCart={() => setIsCartOpen(true)}
+                cartCount={cart.items.reduce((sum, item) => sum + item.quantity, 0)}
               />
             )}
-
+            
             {/* 2. Products Catalogue */}
             {activeTab === 'catalogue' && (
               <ProductsCatalogue
@@ -701,13 +707,15 @@ export function App() {
       </main>
 
       {/* Mobile Bottom Navigation Bar */}
-      <ConsumerMobileNav
-        activeTab={activeTab}
-        onSelectTab={handleNavigateTab}
-        cartCount={cart.items.reduce((sum, item) => sum + item.quantity, 0)}
-        onOpenCart={() => setIsCartOpen(true)}
-        lang={lang}
-      />
+      {activeTab !== 'home' && (
+        <ConsumerMobileNav
+          activeTab={activeTab}
+          onSelectTab={handleNavigateTab}
+          cartCount={cart.items.reduce((sum, item) => sum + item.quantity, 0)}
+          onOpenCart={() => setIsCartOpen(true)}
+          lang={lang}
+        />
+      )}
 
       {/* Modals & Drawers */}
 
@@ -787,6 +795,7 @@ export function App() {
       />
 
       {/* Consumer App Footer */}
+      {activeTab !== 'home' && (
       <footer className="bg-white border-t border-[#E5E9E1] pt-12 pb-24 md:pb-12 text-xs text-[#778177]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -905,6 +914,7 @@ export function App() {
           </div>
         </div>
       </footer>
+      )}
     </div>
   );
 }
