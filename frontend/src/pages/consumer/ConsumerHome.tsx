@@ -161,7 +161,7 @@ export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
         <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#245C3A]/40 to-transparent" />
         
         {/* Hero Content */}
-        <div className="relative z-10 max-w-7xl w-full mx-auto grid lg:grid-cols-12 gap-12 items-center">
+        <div className="relative z-10 max-w-7xl w-full mx-auto grid lg:grid-cols-12 gap-12 items-center pb-16">
           
           {/* Typography side */}
           <div className="lg:col-span-7 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
@@ -215,9 +215,9 @@ export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
               />
             </div>
             {/* THOPPUKARAN below the image */}
-            <div className="mt-6 text-center">
-              <h2 className="text-4xl font-black text-white tracking-widest drop-shadow-lg uppercase">
-                THOPPUKARAN
+            <div className="mt-6 text-center relative z-20">
+              <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#75A85A] to-[#F8F8F2] tracking-widest drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] uppercase">
+                THOPPUKARAN SRI
               </h2>
             </div>
           </div>
