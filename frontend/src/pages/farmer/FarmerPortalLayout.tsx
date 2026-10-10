@@ -127,7 +127,7 @@ export const FarmerPortalLayout: React.FC<FarmerPortalLayoutProps> = ({
         {/* Tab Content Display */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 md:pb-8">
           {activeTab === 'dashboard' && (
-            <FarmerDashboardView onNavigateTab={(tab) => setActiveTab(tab)} />
+            <FarmerDashboardView onNavigateTab={(tab) => setActiveTab(tab)} farmerProfile={farmerProfile} />
           )}
 
           {activeTab === 'products' && (

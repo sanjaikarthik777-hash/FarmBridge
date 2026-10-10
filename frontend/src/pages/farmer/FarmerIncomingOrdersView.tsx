@@ -195,8 +195,26 @@ export const FarmerIncomingOrdersView: React.FC<FarmerIncomingOrdersViewProps> =
                   )}
 
                   {ord.status === 'ready_for_pickup' && (
+                    <button
+                      onClick={() => handleUpdateStatus(ord.id, ord.fulfilment_type === 'delivery' ? 'in_transit' : 'completed')}
+                      className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#245C3A] hover:bg-[#185336] shadow-md transition-all cursor-pointer"
+                    >
+                      {ord.fulfilment_type === 'delivery' ? 'Dispatch for Delivery' : 'Mark Handed Over & Complete'}
+                    </button>
+                  )}
+
+                  {ord.status === 'in_transit' && (
+                    <button
+                      onClick={() => handleUpdateStatus(ord.id, 'completed')}
+                      className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#245C3A] hover:bg-[#185336] shadow-md transition-all cursor-pointer"
+                    >
+                      Confirm Delivery & Complete
+                    </button>
+                  )}
+
+                  {ord.status === 'completed' && (
                     <span className="text-xs text-[#245C3A] font-bold flex items-center gap-1">
-                      <CheckCircle className="w-4 h-4" /> Ready for pickup
+                      <CheckCircle className="w-4 h-4 text-[#245C3A]" /> Completed & Settled
                     </span>
                   )}
                 </div>

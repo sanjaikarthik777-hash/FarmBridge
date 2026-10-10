@@ -26,6 +26,7 @@ import {
 import { FarmerAuthProvider, useFarmerAuth } from '../../context/FarmerAuthContext';
 import { FarmerAuthPage } from '../auth/FarmerAuthPage';
 import { FarmerPortalLayout } from './FarmerPortalLayout';
+import { FarmerOnboarding } from './FarmerOnboarding';
 
 // ─── Inner gate (consumes context, must live inside Provider) ─────────────────
 const InnerGate: React.FC<{ onNavigateToConsumer: () => void }> = ({
@@ -192,6 +193,11 @@ const InnerGate: React.FC<{ onNavigateToConsumer: () => void }> = ({
         </div>
       </div>
     );
+  }
+
+  // ── Onboarding Check ─────────────────────────────────────────────────────────
+  if (farmerProfile?.onboarding_completed === false) {
+    return <FarmerOnboarding onComplete={refresh} />;
   }
 
   // ── Authenticated Farmer → Full Dashboard ────────────────────────────────────

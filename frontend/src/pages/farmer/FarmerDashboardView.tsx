@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Package,
   ShoppingBag,
@@ -10,28 +10,83 @@ import {
   MapPin,
   Calendar,
   Sparkles,
-  AlertCircle,
   Truck,
   Eye,
   Store,
-  ChevronRight
+  ChevronRight,
+  RefreshCw,
+  IndianRupee,
+  Leaf
 } from 'lucide-react';
+import { api } from '../../services/api';
+import { Product, Order, Farm, UserProfile } from '../../types';
 import { FarmerNavTab } from './FarmerSidebar';
 
 interface FarmerDashboardViewProps {
   onNavigateTab: (tab: FarmerNavTab) => void;
+  farmerProfile?: UserProfile | null;
 }
 
-export const FarmerDashboardView: React.FC<FarmerDashboardViewProps> = ({ onNavigateTab }) => {
-  // Fictional illustrative demo data for initial portal UI
+export const FarmerDashboardView: React.FC<FarmerDashboardViewProps> = ({
+  onNavigateTab,
+  farmerProfile,
+}) => {
+  const [farm, setFarm] = useState<Farm | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadDashboardData = async () => {
+    setLoading(true);
+    try {
+      const [farmData, productsData, ordersData] = await Promise.all([
+        api.getMyFarm().catch(() => null),
+        api.getProducts({ farmer_id: 'me' }).catch(() => []),
+        api.getOrders().catch(() => []),
+      ]);
+      setFarm(farmData);
+      setProducts(productsData || []);
+      setOrders(ordersData || []);
+    } catch (err) {
+      console.error('Failed to load farmer dashboard data', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  // Compute live real metrics
+  const totalProducts = products.length;
+  const activeProducts = products.filter(
+    (p) => p.status === 'active' || (p as any).status === 'available'
+  ).length;
+
+  const newOrders = orders.filter(
+    (o) => o.status === 'pending_farmer_confirmation' || (o.status as any) === 'pending'
+  );
+  const pendingOrders = orders.filter((o) =>
+    ['accepted', 'preparing', 'ready_for_pickup', 'in_transit'].includes(o.status)
+  );
+  const completedOrders = orders.filter((o) =>
+    ['completed', 'delivered'].includes(o.status)
+  );
+
+  const totalEarnings = completedOrders.reduce(
+    (sum, o) => sum + (o.subtotal || o.total_amount || 0),
+    0
+  );
+
   const metrics = [
     {
       id: 'total_products',
       label: 'Total Products',
-      value: '8',
-      unit: 'Active Crops',
-      change: '+2 this week',
-      isPositive: true,
+      value: totalProducts.toString(),
+      unit: `${activeProducts} Active in Stock`,
+      change: totalProducts > 0 ? 'Live listings' : 'No crops added',
+      isPositive: totalProducts > 0,
       icon: Package,
       color: '#245C3A',
       bgColor: '#EAF3E7',
@@ -40,10 +95,10 @@ export const FarmerDashboardView: React.FC<FarmerDashboardViewProps> = ({ onNavi
     {
       id: 'new_orders',
       label: 'New Orders',
-      value: '3',
-      unit: 'Received Today',
-      change: 'Needs confirmation',
-      isPositive: true,
+      value: newOrders.length.toString(),
+      unit: 'Action Needed',
+      change: newOrders.length > 0 ? 'Needs confirmation' : 'Queue clear',
+      isPositive: newOrders.length > 0,
       icon: ShoppingBag,
       color: '#367B4B',
       bgColor: '#EAF3E7',
@@ -51,10 +106,10 @@ export const FarmerDashboardView: React.FC<FarmerDashboardViewProps> = ({ onNavi
     },
     {
       id: 'pending_orders',
-      label: 'Pending Orders',
-      value: '2',
-      unit: 'In Harvest / Packing',
-      change: 'Delivery by 2:00 PM',
+      label: 'Pending Harvest',
+      value: pendingOrders.length.toString(),
+      unit: 'In Fulfillment',
+      change: pendingOrders.length > 0 ? 'Preparing / Transit' : 'None pending',
       isPositive: false,
       icon: Clock,
       color: '#92400E',
@@ -62,66 +117,26 @@ export const FarmerDashboardView: React.FC<FarmerDashboardViewProps> = ({ onNavi
       tabTarget: 'incoming_orders' as FarmerNavTab,
     },
     {
-      id: 'completed_orders',
-      label: 'Completed Orders',
-      value: '24',
-      unit: 'Past 30 Days',
+      id: 'total_revenue',
+      label: 'Total Revenue',
+      value: `₹${totalEarnings.toFixed(0)}`,
+      unit: `${completedOrders.length} Fulfilled`,
       change: '100% Direct Settlement',
       isPositive: true,
-      icon: CheckCircle2,
+      icon: IndianRupee,
       color: '#245C3A',
       bgColor: '#EAF3E7',
-      tabTarget: 'order_history' as FarmerNavTab,
+      tabTarget: 'incoming_orders' as FarmerNavTab,
     },
   ];
 
-  // Fictional illustrative recent orders
-  const recentOrders = [
-    {
-      id: 'FB-1049',
-      customer: 'Priya Ramasamy',
-      area: 'Mahalingapuram, Pollachi',
-      items: 'Country Tomatoes (நாட்டு தக்காளி) × 3 kg',
-      amount: '₹96.00',
-      time: '18 mins ago',
-      status: 'pending_confirmation',
-      statusLabel: 'New • Needs Confirmation',
-      statusClass: 'bg-amber-100 text-amber-900 border-amber-200',
-      fulfilment: 'Doorstep Delivery',
-    },
-    {
-      id: 'FB-1048',
-      customer: 'Deepa Sundaram',
-      area: 'Venkatesa Colony, Pollachi',
-      items: 'Sweet Tender Coconuts (இளநீர்) × 5 pcs',
-      amount: '₹225.00',
-      time: '1 hour ago',
-      status: 'preparing',
-      statusLabel: 'Harvesting & Packing',
-      statusClass: 'bg-blue-100 text-blue-900 border-blue-200',
-      fulfilment: 'Farm Gate Pickup',
-    },
-    {
-      id: 'FB-1045',
-      customer: 'Suresh Kumar',
-      area: 'Aliyar Foothills, Pollachi',
-      items: 'Virgin Coconut Oil × 1 L, Shallots × 2 kg',
-      amount: '₹470.00',
-      time: 'Yesterday',
-      status: 'completed',
-      statusLabel: 'Completed & Delivered',
-      statusClass: 'bg-[#EAF3E7] text-[#245C3A] border-[#75A85A]/30',
-      fulfilment: 'Doorstep Delivery',
-    },
-  ];
+  const recentOrders = orders.slice(0, 5);
+  const activeCrops = products.slice(0, 4);
 
-  // Active crop listings snapshot
-  const activeCrops = [
-    { name: 'Country Tomatoes (நாட்டு தக்காளி)', category: 'Vegetables', stock: '45 kg', price: '₹32/kg', status: 'In Stock' },
-    { name: 'Sweet Tender Coconuts (இளநீர்)', category: 'Coconut & Plantation', stock: '120 pcs', price: '₹45/pc', status: 'In Stock' },
-    { name: 'Wood-Pressed Coconut Oil (மரச்செக்கு எண்ணெய்)', category: 'Cold-Pressed Oils', stock: '18 litres', price: '₹310/L', status: 'In Stock' },
-    { name: 'Moringa Drumsticks (முருங்கைக்காய்)', category: 'Vegetables', stock: '25 kg', price: '₹55/kg', status: 'In Stock' },
-  ];
+  const farmName =
+    farm?.farm_name ||
+    farmerProfile?.display_name ||
+    'Farmer Partner';
 
   return (
     <div className="space-y-8 pb-16 max-w-7xl mx-auto">
@@ -130,7 +145,7 @@ export const FarmerDashboardView: React.FC<FarmerDashboardViewProps> = ({ onNavi
         <div className="space-y-1.5">
           <div className="flex items-center gap-2.5 flex-wrap">
             <span className="text-xl sm:text-2xl font-extrabold text-[#202820] tracking-tight">
-              Vanakkam, Thennam Thoppu Farm! 🌾
+              Vanakkam, {farmName}! 🌾
             </span>
             <span className="bg-[#EAF3E7] text-[#245C3A] text-xs font-bold px-3 py-1 rounded-full border border-[#75A85A]/30">
               Verified Farmer Partner
@@ -141,8 +156,15 @@ export const FarmerDashboardView: React.FC<FarmerDashboardViewProps> = ({ onNavi
           </p>
         </div>
 
-        {/* Quick Action Button */}
-        <div className="flex items-center gap-3">
+        {/* Quick Action Buttons */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <button
+            onClick={loadDashboardData}
+            title="Refresh dashboard data"
+            className="p-3 rounded-2xl border border-[#E5E9E1] bg-[#FAFBF7] hover:bg-[#EAF3E7] text-[#367B4B] transition-all cursor-pointer shadow-xs"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
           <button
             onClick={() => onNavigateTab('add_product')}
             className="px-5 py-3 rounded-2xl bg-[#245C3A] hover:bg-[#185336] text-white text-xs font-bold transition-all shadow-md shadow-emerald-950/15 flex items-center gap-2 cursor-pointer active:scale-98"
@@ -153,15 +175,7 @@ export const FarmerDashboardView: React.FC<FarmerDashboardViewProps> = ({ onNavi
         </div>
       </div>
 
-      {/* Demo Disclaimer Alert */}
-      <div className="p-4 bg-amber-50/90 rounded-2xl border border-amber-200/80 text-amber-900 text-xs flex items-start gap-3 shadow-2xs">
-        <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-        <div className="space-y-0.5 leading-relaxed text-[11px]">
-          <span className="font-extrabold">Illustrative Fictional Demo Portal:</span> The metrics, orders, and customer names displayed below are sample demo records for UI preview and development. In future steps, this will sync directly with your live Supabase database and real consumer orders.
-        </div>
-      </div>
-
-      {/* 1. Metrics Grid (Task 5: Total Products, New Orders, Pending Orders, Completed Orders) */}
+      {/* 1. Metrics Grid (Real Data: Total Products, New Orders, Pending Orders, Completed Orders & Revenue) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {metrics.map((m) => {
           const Icon = m.icon;
@@ -223,53 +237,85 @@ export const FarmerDashboardView: React.FC<FarmerDashboardViewProps> = ({ onNavi
         </div>
 
         {/* Order Cards List */}
-        <div className="space-y-3">
-          {recentOrders.map((ord) => (
-            <div
-              key={ord.id}
-              className="p-4 sm:p-5 rounded-2xl bg-[#F8F8F2] border border-[#E5E9E1] hover:border-[#367B4B]/30 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
-            >
-              <div className="space-y-1.5 flex-1 min-w-0">
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <span className="text-xs font-extrabold text-[#202820]">#{ord.id}</span>
-                  <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${ord.statusClass}`}>
-                    {ord.statusLabel}
-                  </span>
-                  <span className="text-[10px] text-[#778177]">({ord.time})</span>
-                </div>
+        {recentOrders.length === 0 ? (
+          <div className="p-8 rounded-2xl bg-[#FAFBF7] border border-dashed border-[#E5E9E1] text-center space-y-2">
+            <ShoppingBag className="w-8 h-8 text-[#778177] mx-auto opacity-60" />
+            <p className="text-xs font-bold text-[#202820]">No Customer Orders Yet</p>
+            <p className="text-[11px] text-[#778177] max-w-sm mx-auto">
+              Once local buyers order produce from your listed crops, incoming orders will appear here for you to confirm and prepare.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {recentOrders.map((ord) => {
+              const isPending = ord.status === 'pending_farmer_confirmation' || (ord.status as any) === 'pending';
+              const isCompleted = ord.status === 'completed' || ord.status === 'delivered';
+              const isRejected = ord.status === 'rejected';
 
-                <div className="text-xs font-bold text-[#202820]">
-                  {ord.items}
-                </div>
-
-                <div className="text-[11px] text-[#778177] flex items-center gap-3 flex-wrap">
-                  <span>Customer: <strong className="text-[#202820]">{ord.customer}</strong></span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-[#367B4B]" />
-                    <span>{ord.area}</span>
-                  </span>
-                  <span>•</span>
-                  <span className="text-[#245C3A] font-semibold">{ord.fulfilment}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between md:justify-end gap-4 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-[#E5E9E1]">
-                <div className="text-left md:text-right">
-                  <div className="text-base font-extrabold text-[#245C3A]">{ord.amount}</div>
-                  <div className="text-[10px] text-[#778177]">Direct Payout</div>
-                </div>
-
-                <button
-                  onClick={() => onNavigateTab('incoming_orders')}
-                  className="px-3.5 py-2 bg-white hover:bg-[#EAF3E7] text-[#245C3A] border border-[#E5E9E1] rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs"
+              return (
+                <div
+                  key={ord.id}
+                  className="p-4 sm:p-5 rounded-2xl bg-[#F8F8F2] border border-[#E5E9E1] hover:border-[#367B4B]/30 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
                 >
-                  Manage Order
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+                  <div className="space-y-1.5 flex-1 min-w-0">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <span className="text-xs font-extrabold text-[#202820]">#{ord.order_number || ord.id.slice(0, 8)}</span>
+                      <span
+                        className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${
+                          isPending
+                            ? 'bg-amber-100 text-amber-900 border-amber-200'
+                            : isCompleted
+                            ? 'bg-[#EAF3E7] text-[#245C3A] border-[#75A85A]/30'
+                            : isRejected
+                            ? 'bg-rose-100 text-rose-900 border-rose-200'
+                            : 'bg-blue-100 text-blue-900 border-blue-200'
+                        }`}
+                      >
+                        {ord.status.replace(/_/g, ' ').toUpperCase()}
+                      </span>
+                      <span className="text-[10px] text-[#778177]">
+                        {new Date(ord.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+
+                    <div className="text-xs font-bold text-[#202820]">
+                      {ord.items && ord.items.length > 0
+                        ? ord.items.map((it) => `${it.product_name_snapshot} (${it.quantity} ${it.unit_snapshot})`).join(', ')
+                        : 'Fresh produce harvest'}
+                    </div>
+
+                    <div className="text-[11px] text-[#778177] flex items-center gap-3 flex-wrap">
+                      <span>Customer: <strong className="text-[#202820]">{ord.buyer_name || 'Verified Buyer'}</strong></span>
+                      <span>•</span>
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-[#367B4B]" />
+                        <span>{ord.delivery_area || ord.delivery_address || 'Pollachi'}</span>
+                      </span>
+                      <span>•</span>
+                      <span className="text-[#245C3A] font-semibold">
+                        {ord.fulfilment_type === 'delivery' ? '🛵 Doorstep Delivery' : '🚜 Farm Gate Pickup'}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between md:justify-end gap-4 shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-[#E5E9E1]">
+                    <div className="text-left md:text-right">
+                      <div className="text-base font-extrabold text-[#245C3A]">₹{(ord.subtotal || ord.total_amount || 0).toFixed(2)}</div>
+                      <div className="text-[10px] text-[#778177]">Direct Payout</div>
+                    </div>
+
+                    <button
+                      onClick={() => onNavigateTab('incoming_orders')}
+                      className="px-3.5 py-2 bg-white hover:bg-[#EAF3E7] text-[#245C3A] border border-[#E5E9E1] rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                    >
+                      Manage Order
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* 3. Active Produce Inventory Snapshot */}
@@ -294,31 +340,60 @@ export const FarmerDashboardView: React.FC<FarmerDashboardViewProps> = ({ onNavi
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {activeCrops.map((crop) => (
-            <div
-              key={crop.name}
-              className="p-4 rounded-2xl bg-[#F8F8F2] border border-[#E5E9E1] space-y-2 flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-[#778177]">{crop.category}</span>
-                  <span className="bg-[#EAF3E7] text-[#245C3A] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#75A85A]/30">
-                    {crop.status}
-                  </span>
-                </div>
-                <h4 className="text-xs font-bold text-[#202820] mt-1.5 line-clamp-2">
-                  {crop.name}
-                </h4>
-              </div>
-
-              <div className="pt-2 border-t border-[#E5E9E1] flex items-center justify-between text-xs">
-                <span className="font-extrabold text-[#245C3A]">{crop.price}</span>
-                <span className="text-[11px] text-[#778177]">Stock: {crop.stock}</span>
-              </div>
+        {activeCrops.length === 0 ? (
+          <div className="p-8 rounded-2xl bg-[#FAFBF7] border border-dashed border-[#E5E9E1] text-center space-y-3">
+            <Leaf className="w-8 h-8 text-[#367B4B] mx-auto opacity-70" />
+            <div>
+              <p className="text-xs font-bold text-[#202820]">No Produce Listed Yet</p>
+              <p className="text-[11px] text-[#778177] max-w-sm mx-auto mt-0.5">
+                List your first harvest to start selling direct to consumers in Pollachi without middlemen!
+              </p>
             </div>
-          ))}
-        </div>
+            <button
+              onClick={() => onNavigateTab('add_product')}
+              className="px-4 py-2 bg-[#245C3A] text-white rounded-xl text-xs font-bold hover:bg-[#185336] cursor-pointer transition-all shadow-xs inline-flex items-center gap-1.5"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add First Crop</span>
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {activeCrops.map((crop) => (
+              <div
+                key={crop.id}
+                className="p-4 rounded-2xl bg-[#F8F8F2] border border-[#E5E9E1] space-y-2 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-[#778177]">
+                      {(crop as any).category_name || 'Fresh Produce'}
+                    </span>
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                        crop.status === 'active' || (crop as any).status === 'available'
+                          ? 'bg-[#EAF3E7] text-[#245C3A] border-[#75A85A]/30'
+                          : crop.status === 'sold_out'
+                          ? 'bg-rose-50 text-rose-700 border-rose-200'
+                          : 'bg-gray-100 text-gray-700 border-gray-200'
+                      }`}
+                    >
+                      {crop.status === 'active' ? 'In Stock' : crop.status.replace(/_/g, ' ')}
+                    </span>
+                  </div>
+                  <h4 className="text-xs font-bold text-[#202820] mt-1.5 line-clamp-2">
+                    {crop.name} {crop.name_ta ? `(${crop.name_ta})` : ''}
+                  </h4>
+                </div>
+
+                <div className="pt-2 border-t border-[#E5E9E1] flex items-center justify-between text-xs">
+                  <span className="font-extrabold text-[#245C3A]">₹{crop.price}/{crop.unit}</span>
+                  <span className="text-[11px] text-[#778177]">Stock: {crop.available_quantity} {crop.unit}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

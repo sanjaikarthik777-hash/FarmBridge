@@ -34,65 +34,6 @@ const STATUS_BADGE: Record<string, { label: string; className: string; icon: Rea
   pending: { label: 'Pending Review', className: 'bg-amber-50 text-amber-700 border-amber-200', icon: Clock },
 };
 
-// Realistic demo products if the API is not connected
-const DEMO_PRODUCTS: Product[] = [
-  {
-    id: 'p1', name: 'Country Tomatoes', name_ta: 'நாட்டு தக்காளி',
-    price: 32, unit: 'kg', available_quantity: 45,
-    minimum_order_quantity: 1, status: 'available',
-    category_id: 'c1', category_name: 'Vegetables',
-    image_paths: ['https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&fit=crop'],
-    description: 'Red soil Pollachi tomatoes, pesticide-free.', farm_id: 'f1', farmer_id: 'u1',
-    fulfilment_options: ['pickup', 'delivery'],
-    created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-    distance_km: 0, rating_avg: 4.8, review_count: 12,
-  } as any,
-  {
-    id: 'p2', name: 'Sweet Tender Coconuts', name_ta: 'இளநீர்',
-    price: 45, unit: 'piece', available_quantity: 120,
-    minimum_order_quantity: 2, status: 'available',
-    category_id: 'c3', category_name: 'Coconut & Plantation',
-    image_paths: ['https://images.unsplash.com/photo-1580984969071-a8da8d6b8f35?w=400&fit=crop'],
-    description: 'Fresh tender coconuts from Aliyar grove.', farm_id: 'f1', farmer_id: 'u1',
-    fulfilment_options: ['pickup'],
-    created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-    distance_km: 0, rating_avg: 4.9, review_count: 28,
-  } as any,
-  {
-    id: 'p3', name: 'Wood-Pressed Coconut Oil', name_ta: 'மரச்செக்கு தேங்காய் எண்ணெய்',
-    price: 310, unit: 'litre', available_quantity: 18,
-    minimum_order_quantity: 1, status: 'available',
-    category_id: 'c4', category_name: 'Cold-Pressed Oils',
-    image_paths: ['https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&fit=crop'],
-    description: 'Traditional wood-pressed virgin coconut oil.', farm_id: 'f1', farmer_id: 'u1',
-    fulfilment_options: ['pickup', 'delivery'],
-    created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-    distance_km: 0, rating_avg: 5.0, review_count: 7,
-  } as any,
-  {
-    id: 'p4', name: 'Moringa Drumsticks', name_ta: 'முருங்கைக்காய்',
-    price: 55, unit: 'kg', available_quantity: 0,
-    minimum_order_quantity: 0.5, status: 'sold_out',
-    category_id: 'c1', category_name: 'Vegetables',
-    image_paths: ['https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&fit=crop'],
-    description: 'Organic drumstick from moringa grove.', farm_id: 'f1', farmer_id: 'u1',
-    fulfilment_options: ['pickup', 'delivery'],
-    created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-    distance_km: 0, rating_avg: 4.6, review_count: 4,
-  } as any,
-  {
-    id: 'p5', name: 'Country Eggs (Naatu Muttai)', name_ta: 'நாட்டு முட்டை',
-    price: 12, unit: 'piece', available_quantity: 60,
-    minimum_order_quantity: 6, status: 'paused',
-    category_id: 'c6', category_name: 'Dairy & Eggs',
-    image_paths: ['https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=400&fit=crop'],
-    description: 'Free-range country eggs from backyard hens.', farm_id: 'f1', farmer_id: 'u1',
-    fulfilment_options: ['pickup'],
-    created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-    distance_km: 0, rating_avg: 4.7, review_count: 9,
-  } as any,
-];
-
 export const FarmerMyProductsView: React.FC<FarmerMyProductsViewProps> = ({ onNavigateTab }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,22 +41,19 @@ export const FarmerMyProductsView: React.FC<FarmerMyProductsViewProps> = ({ onNa
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [actionLoading, setActionLoading] = useState<Record<string, boolean>>({});
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const [isDemo, setIsDemo] = useState(false);
 
   const loadProducts = useCallback(async () => {
     setLoading(true);
     try {
       const data = await api.getProducts({ farmer_id: 'me' });
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setProducts(data);
-        setIsDemo(false);
       } else {
-        setProducts(DEMO_PRODUCTS);
-        setIsDemo(true);
+        setProducts([]);
       }
-    } catch {
-      setProducts(DEMO_PRODUCTS);
-      setIsDemo(true);
+    } catch (err) {
+      console.error('Failed to load farmer products', err);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -207,16 +145,6 @@ export const FarmerMyProductsView: React.FC<FarmerMyProductsViewProps> = ({ onNa
           </div>
         </div>
       </div>
-
-      {/* Demo Banner */}
-      {isDemo && (
-        <div className="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-amber-900 text-xs flex items-start gap-3 shadow-2xs">
-          <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-          <span>
-            <strong>Illustrative Demo Inventory:</strong> These are sample product records shown for UI preview. Connect the FastAPI backend and authenticate as a farmer to see your live produce listings.
-          </span>
-        </div>
-      )}
 
       {/* Search & Filter Bar */}
       <div className="bg-white rounded-3xl p-4 border border-[#E5E9E1] shadow-2xs flex flex-col sm:flex-row gap-3">

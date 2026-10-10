@@ -144,20 +144,21 @@ export const ProductsCatalogue: React.FC<ProductsCatalogueProps> = ({
 
         {/* Search Input on Desktop & Controls */}
         <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="relative flex-1 md:w-72">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#778177]" />
+          <div className="relative flex-1 md:w-80">
+            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#778177] pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search produce or farm..."
-              className="w-full pl-10 pr-8 py-2 rounded-2xl bg-white border border-[#E5E9E1] text-xs font-medium text-[#202820] focus:border-[#367B4B] focus:outline-hidden"
+              className="w-full pl-10 pr-8 py-2 rounded-full bg-white border border-[#E5E9E1] text-xs font-medium text-[#202820] placeholder-[#778177] focus:border-[#367B4B] focus:ring-4 focus:ring-[#367B4B]/10 focus:outline-hidden transition-all shadow-xs"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-700"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                aria-label="Clear search"
               >
                 <X className="w-3.5 h-3.5" />
               </button>

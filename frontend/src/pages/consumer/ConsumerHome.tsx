@@ -145,8 +145,7 @@ export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
       </nav>
 
       {/* --- HERO SECTION --- */}
-      <section className="relative w-screen min-h-[90vh] flex items-center justify-center pt-24 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#245C3A]">
-        {/* Cinematic Background Image */}
+      <section className="relative w-screen min-h-[92vh] flex items-center justify-center pt-36 sm:pt-40 lg:pt-44 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#245C3A]">
         {/* Cinematic Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-[1.02] transform transition-transform duration-[20s] ease-linear hover:scale-110"
@@ -161,7 +160,7 @@ export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
         <div className="absolute top-0 left-0 w-full h-1/3 bg-gradient-to-b from-[#245C3A]/40 to-transparent" />
         
         {/* Hero Content */}
-        <div className="relative z-10 max-w-7xl w-full mx-auto grid lg:grid-cols-12 gap-12 items-center pb-16">
+        <div className="relative z-10 max-w-7xl w-full mx-auto grid lg:grid-cols-12 gap-12 items-center pb-8">
           
           {/* Typography side */}
           <div className="lg:col-span-7 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
@@ -205,18 +204,20 @@ export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
             </div>
           </div>
           
-          {/* Right Side - Clean Farmer Image */}
-          <div className="hidden lg:flex lg:col-span-5 flex-col items-center justify-center relative animate-in fade-in slide-in-from-right-8 duration-1000 delay-500">
-            <div className="w-full max-w-[400px] aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl">
-              <img 
-                src="/hero-farmer.png" 
-                alt="Village Farmer with Basket" 
-                className="w-full h-full object-cover"
-              />
+          {/* Right Side - Clean Free Floating Farmer Image */}
+          <div className="hidden lg:flex lg:col-span-5 flex-col items-center justify-center relative animate-in fade-in slide-in-from-right-8 duration-1000 delay-500 pt-6">
+            <div className="relative group p-3 rounded-[2.5rem] bg-white/10 backdrop-blur-md border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.35)] transition-all duration-500 hover:-translate-y-2">
+              <div className="w-full max-w-[360px] aspect-[4/5] rounded-[2rem] overflow-hidden shadow-inner">
+                <img 
+                  src="/hero-farmer.png" 
+                  alt="Village Farmer with Basket" 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+              </div>
             </div>
             {/* THOPPUKARAN below the image */}
-            <div className="mt-6 text-center relative z-20">
-              <h2 className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#75A85A] to-[#F8F8F2] tracking-widest drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] uppercase">
+            <div className="mt-5 text-center relative z-20">
+              <h2 className="text-3xl lg:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#75A85A] to-[#F8F8F2] tracking-widest drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] uppercase">
                 THOPPUKARAN SRI
               </h2>
             </div>
@@ -407,41 +408,66 @@ export const ConsumerHome: React.FC<ConsumerHomeProps> = ({
 
           {/* Horizontally scrolling farmer cards */}
           <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-none snap-x snap-mandatory relative z-10">
-            {featuredFarms.map((farm, idx) => (
-              <div 
-                key={farm.id} 
-                className="min-w-[300px] sm:min-w-[380px] snap-center group cursor-pointer"
-                onClick={() => onSelectFarm?.(farm.id)}
-              >
-                <div className="w-full aspect-[4/5] rounded-[2.5rem] overflow-hidden relative mb-6">
-                  {/* Circular/Organic image mask approach via border-radius */}
-                  <img 
-                    src={`https://images.unsplash.com/photo-1595435012529-65b16e45f942?w=600&auto=format&fit=crop&sig=${idx}`} 
-                    className="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
-                    alt={farm.farm_name}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                  
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <h3 className="text-2xl font-black text-white mb-1">{(farm as any).farmer_name || (farm as any).contact_name || 'Farmer'}</h3>
-                    <p className="text-[#75A85A] text-sm font-bold">{farm.farm_name}</p>
-                  </div>
-                </div>
+            {featuredFarms.map((farm, idx) => {
+              const farmNameLower = (farm.farm_name || '').toLowerCase();
+              const farmImg = farmNameLower.includes('thennam') || farmNameLower.includes('coconut') || farmNameLower.includes('thoppu')
+                ? '/images/farm-thennam-thoppu.jpg'
+                : farmNameLower.includes('anaimalai') || farmNameLower.includes('valley') || farmNameLower.includes('organic')
+                ? '/images/farm-anaimalai-valley.jpg'
+                : idx % 2 === 0
+                ? '/images/farm-thennam-thoppu.jpg'
+                : '/images/farm-anaimalai-valley.jpg';
 
-                <div className="px-2 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-gray-400 mb-1">Pollachi, Tamil Nadu</p>
-                    <div className="flex items-center gap-1.5 text-sm font-bold">
-                      <Star className="w-4 h-4 text-[#E7A83E] fill-[#E7A83E]" />
-                      4.9 <span className="text-gray-500 font-normal">({farm.products_count || 12} Products)</span>
+              const farmerName = farmNameLower.includes('thennam')
+                ? 'Murugan Palanisamy'
+                : farmNameLower.includes('anaimalai')
+                ? 'Lakshmi Ramasamy'
+                : (farm as any).farmer_name || (farm as any).owner_name || 'Verified Farmer';
+
+              return (
+                <div 
+                  key={farm.id} 
+                  className="min-w-[300px] sm:min-w-[380px] snap-center group cursor-pointer"
+                  onClick={() => onSelectFarm?.(farm.id)}
+                >
+                  <div className="w-full aspect-[4/5] rounded-[2.5rem] overflow-hidden relative mb-6 shadow-xl border border-white/10">
+                    <img 
+                      src={farmImg} 
+                      className="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+                      alt={farm.farm_name}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = '/images/farm-thennam-thoppu.jpg';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                    
+                    <div className="absolute top-5 left-5">
+                      <span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-[10px] font-extrabold uppercase tracking-wider border border-white/20">
+                        ● 100% Direct Farm
+                      </span>
+                    </div>
+
+                    <div className="absolute bottom-6 left-6 right-6">
+                      <h3 className="text-2xl font-black text-white mb-1 tracking-tight">{farmerName}</h3>
+                      <p className="text-[#75A85A] text-sm font-bold">{farm.farm_name}</p>
                     </div>
                   </div>
-                  <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-[#202820] transition-colors">
-                    <ArrowRight className="w-5 h-5 -rotate-45" />
+
+                  <div className="px-2 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">{farm.region || 'Pollachi'}, Tamil Nadu</p>
+                      <div className="flex items-center gap-1.5 text-sm font-bold">
+                        <Star className="w-4 h-4 text-[#E7A83E] fill-[#E7A83E]" />
+                        4.9 <span className="text-gray-500 font-normal">({farm.products_count || 12} Products)</span>
+                      </div>
+                    </div>
+                    <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-[#75A85A] group-hover:text-white transition-all duration-300">
+                      <ArrowRight className="w-5 h-5 -rotate-45" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

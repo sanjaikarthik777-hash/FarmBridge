@@ -83,7 +83,7 @@ export function App() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -93,14 +93,13 @@ export function App() {
   // 1. Initial Data Loading
   const loadInitialData = async (loc = activeLocation) => {
     try {
-      setLoading(true);
 
       // Check authenticated session with backend
       try {
         const me = await api.getMe();
         setCurrentProfile(me);
       } catch (e) {
-        setCurrentProfile(null);
+        // Unauthenticated or guest mode is fine
       }
 
       // Concurrently fetch catalogue, nearby farms, cart, categories, addresses, wishlist
@@ -122,20 +121,25 @@ export function App() {
           api.getNotifications().catch(() => []),
         ]);
 
-      setCategories(catData);
-      setProducts(prodData);
-      setFarms(farmsData);
+      setCategories(catData || []);
+      setProducts(prodData || []);
+      setFarms(farmsData || []);
       setCart(cartData);
-      setOrders(ordersData);
-      setSavedAddresses(addrsData);
-      setWishlistIds(wishData.product_ids || []);
-      setNotifications(notifData);
+      setOrders(ordersData || []);
+      setSavedAddresses(addrsData || []);
+      setWishlistIds(wishData?.product_ids || []);
+      setNotifications(notifData || []);
     } catch (err) {
       console.error('Failed to load platform data', err);
     } finally {
       setLoading(false);
     }
   };
+
+  // Always load initial data once on mount
+  useEffect(() => {
+    loadInitialData();
+  }, []);
 
   // 2. Supabase Auth Lifecycle and OAuth Redirect Handling
   useEffect(() => {
@@ -240,8 +244,6 @@ export function App() {
         } catch (e) {
           console.error('Initial getSession sync error:', e);
         }
-      } else {
-        loadInitialData();
       }
     });
 
@@ -538,16 +540,7 @@ export function App() {
 
       {/* Main Content Area */}
       <main className={`flex-1 w-full ${activeTab === 'home' ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-28 md:pb-12'}`}>
-        {loading ? (
-          <div className="py-24 text-center space-y-3">
-            <div className="w-10 h-10 border-4 border-[#1F6B45] border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="text-xs font-bold text-gray-600">
-              Connecting to Pollachi Regional Farm Network...
-            </p>
-          </div>
-        ) : (
-          <>
-            {/* 1. Home Page */}
+        {/* 1. Home Page */}
             {activeTab === 'home' && (
               <ConsumerHome
                 products={products}
@@ -713,8 +706,6 @@ export function App() {
                 </div>
               )
             )}
-          </>
-        )}
       </main>
 
       {/* Mobile Bottom Navigation Bar */}

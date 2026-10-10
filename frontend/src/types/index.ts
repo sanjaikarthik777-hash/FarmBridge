@@ -12,6 +12,8 @@ export interface UserProfile {
   default_latitude?: number;
   default_longitude?: number;
   default_address?: string;
+  supabase_auth_id?: string;
+  onboarding_completed?: boolean;
   created_at: string;
 }
 

@@ -16,6 +16,7 @@ import {
   NotificationItem,
   WishlistResponse
 } from '../types';
+import { supabase } from '../utils/supabase/client';
 
 const API_BASE = '/api/v1';
 
@@ -134,18 +135,22 @@ export const api = {
     display_name?: string | null;
     avatar_url?: string | null;
   }): Promise<AuthSession> {
-    const res = await fetch(`${API_BASE}/auth/supabase-sync`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || 'Failed to sync consumer profile');
+    let { data: profile } = await supabase.from('profiles').select('*').eq('supabase_auth_id', payload.supabase_id).single();
+    if (!profile) {
+      const { data: newProfile, error } = await supabase.from('profiles').insert({
+        supabase_auth_id: payload.supabase_id,
+        email: payload.email,
+        display_name: payload.display_name || 'Consumer',
+        avatar_path: payload.avatar_url,
+        role: 'consumer',
+        verification_status: 'verified'
+      }).select().single();
+      if (error) throw new Error('Failed to create consumer profile: ' + error.message);
+      profile = newProfile;
     }
-    const session: AuthSession = await res.json();
-    setAuthToken(session.token);
-    return session;
+    
+    setAuthToken('supabase-auth-token');
+    return { token: 'supabase-auth-token', profile: profile as any };
   },
 
   async sendEmailOtp(email: string): Promise<any> {
@@ -185,29 +190,33 @@ export const api = {
     return data.verified;
   },
 
-  /**
-   * syncSupabaseFarmer — farmer-specific Supabase session sync.
-   * Finds or creates a farmer profile and validates role/verification_status.
-   * Kept separate from syncSupabaseUser to enforce consumer/farmer role isolation.
-   */
   async syncSupabaseFarmer(payload: {
     supabase_id: string;
     email?: string | null;
     display_name?: string | null;
     avatar_url?: string | null;
   }): Promise<AuthSession> {
-    const res = await fetch(`${API_BASE}/auth/supabase-farmer-sync`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || 'Failed to sync farmer profile');
+    let { data: profile } = await supabase.from('profiles').select('*').eq('supabase_auth_id', payload.supabase_id).maybeSingle();
+    if (!profile) {
+      const { data: newProfile, error } = await supabase.from('profiles').insert({
+        supabase_auth_id: payload.supabase_id,
+        email: payload.email,
+        display_name: payload.display_name || 'Farmer',
+        avatar_path: payload.avatar_url,
+        role: 'farmer',
+        verification_status: 'verified',
+        onboarding_completed: false
+      }).select().maybeSingle();
+      if (error) throw new Error('Failed to create farmer profile: ' + error.message);
+      profile = newProfile;
     }
-    const session: AuthSession = await res.json();
-    setAuthToken(session.token);
-    return session;
+    
+    // Set dummy token for backend compatibility if needed
+    setAuthToken('supabase-auth-token');
+    
+    let { data: farm } = await supabase.from('farms').select('*').eq('owner_id', profile.id).maybeSingle();
+    
+    return { token: 'supabase-auth-token', profile: profile as any, farm: farm as any };
   },
 
   async getMe(): Promise<UserProfile> {
@@ -268,9 +277,13 @@ export const api = {
   },
 
   async getMyFarm(): Promise<Farm> {
-    const res = await fetch(`${API_BASE}/farms/my-farm`, { headers: getHeaders() });
-    if (!res.ok) throw new Error('Failed to retrieve farm details');
-    return res.json();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) throw new Error('Unauthenticated');
+    const { data: profile } = await supabase.from('profiles').select('id').eq('supabase_auth_id', session.user.id).single();
+    if (!profile) throw new Error('Profile not found');
+    const { data: farm, error } = await supabase.from('farms').select('*').eq('owner_id', profile.id).single();
+    if (error) throw new Error('Failed to retrieve farm details');
+    return farm as any;
   },
 
   async updateFarmLocation(farmId: string, data: {
@@ -325,122 +338,194 @@ export const api = {
   },
 
   async getProducts(params?: { category_id?: string; q?: string; farmer_id?: string; farm_id?: string; status?: string; lat?: number; lng?: number }): Promise<Product[]> {
-    const query = new URLSearchParams();
-    if (params?.category_id) query.append('category_id', params.category_id);
-    if (params?.q) query.append('q', params.q);
-    if (params?.farmer_id) query.append('farmer_id', params.farmer_id);
-    if (params?.farm_id) query.append('farm_id', params.farm_id);
-    if (params?.status) query.append('status', params.status);
-    if (params?.lat !== undefined) query.append('lat', params.lat.toString());
-    if (params?.lng !== undefined) query.append('lng', params.lng.toString());
-
-    const res = await fetch(`${API_BASE}/products?${query.toString()}`, { headers: getHeaders() });
-    return res.json();
+    let query = supabase.from('products').select('*');
+    if (params?.farmer_id === 'me') {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data: profile } = await supabase.from('profiles').select('id').eq('supabase_auth_id', session.user.id).single();
+        if (profile) {
+          query = query.eq('farmer_id', profile.id);
+        } else {
+          return [];
+        }
+      } else {
+        return [];
+      }
+    } else if (params?.farmer_id) {
+      query = query.eq('farmer_id', params.farmer_id);
+    }
+    if (params?.category_id) query = query.eq('category_id', params.category_id);
+    if (params?.farm_id) query = query.eq('farm_id', params.farm_id);
+    if (params?.status) query = query.eq('status', params.status);
+    if (params?.q) query = query.ilike('name', `%${params.q}%`);
+    const { data, error } = await query;
+    if (error) throw new Error(error.message);
+    return data as any[];
   },
 
   async createProduct(data: Partial<Product>): Promise<Product> {
-    const res = await fetch(`${API_BASE}/products`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || 'Failed to list product');
+    let farmerId = data.farmer_id;
+    let farmId = data.farm_id;
+    if (!farmerId || !farmId) {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data: profile } = await supabase.from('profiles').select('id').eq('supabase_auth_id', session.user.id).single();
+        if (profile) {
+          farmerId = farmerId || profile.id;
+          const { data: farm } = await supabase.from('farms').select('id').eq('owner_id', profile.id).single();
+          if (farm) farmId = farmId || farm.id;
+        }
+      }
     }
-    return res.json();
+    const productPayload = {
+      ...data,
+      farmer_id: farmerId,
+      farm_id: farmId,
+      status: data.status || 'active',
+    };
+    const { data: newProduct, error } = await supabase.from('products').insert(productPayload).select().single();
+    if (error) throw new Error(error.message);
+    return newProduct as any;
   },
 
   async updateProduct(productId: string, data: Partial<Product>): Promise<Product> {
-    const res = await fetch(`${API_BASE}/products/${productId}`, {
-      method: 'PATCH',
-      headers: getHeaders(),
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || 'Failed to update produce');
-    }
-    return res.json();
+    const { data: updated, error } = await supabase.from('products').update(data).eq('id', productId).select().single();
+    if (error) throw new Error(error.message);
+    return updated as any;
   },
 
   async deleteProduct(productId: string): Promise<void> {
-    const res = await fetch(`${API_BASE}/products/${productId}`, {
-      method: 'DELETE',
-      headers: getHeaders(),
-    });
-    if (!res.ok) throw new Error('Failed to delete produce listing');
+    const { error } = await supabase.from('products').delete().eq('id', productId);
+    if (error) throw new Error(error.message);
   },
 
   async pauseProduct(productId: string): Promise<Product> {
-    const res = await fetch(`${API_BASE}/products/${productId}/pause`, {
-      method: 'POST',
-      headers: getHeaders(),
-    });
-    return res.json();
+    const { data, error } = await supabase.from('products').update({ status: 'paused' }).eq('id', productId).select().single();
+    if (error) throw error;
+    return data as any;
   },
 
   async markSoldOut(productId: string): Promise<Product> {
-    const res = await fetch(`${API_BASE}/products/${productId}/mark-sold-out`, {
-      method: 'POST',
-      headers: getHeaders(),
-    });
-    return res.json();
+    const { data, error } = await supabase.from('products').update({ status: 'sold_out', available_quantity: 0 }).eq('id', productId).select().single();
+    if (error) throw error;
+    return data as any;
+  },
+
+  async resumeProduct(productId: string, quantity?: number): Promise<Product> {
+    const updateData: any = { status: 'active' };
+    if (quantity !== undefined) updateData.available_quantity = quantity;
+    const { data, error } = await supabase.from('products').update(updateData).eq('id', productId).select().single();
+    if (error) throw error;
+    return data as any;
   },
 
   // --- CART ---
   async getCart(): Promise<Cart> {
-    const res = await fetch(`${API_BASE}/cart`, { headers: getHeaders() });
-    return res.json();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) return { items: [], subtotal: 0, delivery_fee: 0, platform_fee: 0, total: 0 };
+    const { data: profile } = await supabase.from('profiles').select('id').eq('supabase_auth_id', session.user.id).single();
+    if (!profile) return { items: [], subtotal: 0, delivery_fee: 0, platform_fee: 0, total: 0 };
+    
+    let { data: cart } = await supabase.from('carts').select('id').eq('buyer_id', profile.id).single();
+    if (!cart) {
+      const { data: newCart } = await supabase.from('carts').insert({ buyer_id: profile.id }).select().single();
+      cart = newCart;
+    }
+    
+    if (!cart) return { items: [], subtotal: 0, delivery_fee: 0, platform_fee: 0, total: 0 };
+
+    const { data: items } = await supabase.from('cart_items').select('*, product:products(*)').eq('cart_id', cart.id);
+    
+    let subtotal = 0;
+    const formattedItems = (items || []).map(item => {
+      const p = item.product || {};
+      const line_total = item.quantity * (p.price || 0);
+      subtotal += line_total;
+      return {
+        id: item.id,
+        product_id: item.product_id,
+        product_name: p.name || 'Unknown',
+        unit: p.unit || 'kg',
+        unit_price: p.price || 0,
+        quantity: item.quantity,
+        line_total,
+        available_stock: p.available_quantity || 0,
+        farmer_id: p.farmer_id || '',
+        farm_name: p.farm_name || '',
+        image_url: p.image_paths?.[0] || null
+      };
+    });
+    
+    return {
+      items: formattedItems,
+      subtotal,
+      delivery_fee: formattedItems.length ? 40 : 0,
+      platform_fee: formattedItems.length ? 15 : 0,
+      total: subtotal + (formattedItems.length ? 55 : 0)
+    };
   },
 
   async addToCart(productId: string, quantity: number): Promise<Cart> {
-    const res = await fetch(`${API_BASE}/cart/items`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify({ product_id: productId, quantity }),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || 'Failed to add to basket');
+    const { data: { session } } = await supabase.auth.getSession();
+    const { data: profile } = await supabase.from('profiles').select('id').eq('supabase_auth_id', session?.user?.id).single();
+    if (!profile) throw new Error('Profile not found');
+    let { data: cart } = await supabase.from('carts').select('id').eq('buyer_id', profile.id).single();
+    if (!cart) {
+      const { data: newCart } = await supabase.from('carts').insert({ buyer_id: profile.id }).select().single();
+      cart = newCart;
     }
-    return res.json();
+    
+    if (!cart) throw new Error('Could not create cart');
+
+    const { data: existing } = await supabase.from('cart_items').select('*').eq('cart_id', cart.id).eq('product_id', productId).single();
+    if (existing) {
+      await supabase.from('cart_items').update({ quantity: existing.quantity + quantity }).eq('id', existing.id);
+    } else {
+      await supabase.from('cart_items').insert({ cart_id: cart.id, product_id: productId, quantity });
+    }
+    return this.getCart();
   },
 
   async updateCartItem(itemId: string, quantity: number): Promise<Cart> {
-    const res = await fetch(`${API_BASE}/cart/items/${itemId}?quantity=${quantity}`, {
-      method: 'PATCH',
-      headers: getHeaders(),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || 'Failed to update item');
-    }
-    return res.json();
+    await supabase.from('cart_items').update({ quantity }).eq('id', itemId);
+    return this.getCart();
   },
 
   async removeCartItem(itemId: string): Promise<Cart> {
-    const res = await fetch(`${API_BASE}/cart/items/${itemId}`, {
-      method: 'DELETE',
-      headers: getHeaders(),
-    });
-    return res.json();
+    await supabase.from('cart_items').delete().eq('id', itemId);
+    return this.getCart();
   },
 
   async clearCart(): Promise<Cart> {
-    const res = await fetch(`${API_BASE}/cart`, {
-      method: 'DELETE',
-      headers: getHeaders(),
-    });
-    return res.json();
+    const { data: { session } } = await supabase.auth.getSession();
+    const { data: profile } = await supabase.from('profiles').select('id').eq('supabase_auth_id', session?.user?.id).single();
+    if (profile) {
+      const { data: cart } = await supabase.from('carts').select('id').eq('buyer_id', profile.id).single();
+      if (cart) {
+        await supabase.from('cart_items').delete().eq('cart_id', cart.id);
+      }
+    }
+    return this.getCart();
   },
 
   // --- ORDERS ---
   async getOrders(): Promise<Order[]> {
-    if (!getAuthToken()) return [];
-    const res = await fetch(`${API_BASE}/orders`, { headers: getHeaders() });
-    if (!res.ok) return [];
-    return res.json();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) return [];
+    
+    const { data: profile } = await supabase.from('profiles').select('id, role').eq('supabase_auth_id', session.user.id).single();
+    if (!profile) return [];
+    
+    let query = supabase.from('orders').select('*, items:order_items(*)').order('created_at', { ascending: false });
+    if (profile.role === 'farmer') {
+      query = query.eq('farmer_id', profile.id);
+    } else {
+      query = query.eq('buyer_id', profile.id);
+    }
+    
+    const { data, error } = await query;
+    if (error) throw error;
+    return data as any;
   },
 
   async createOrder(data: {
@@ -453,41 +538,66 @@ export const api = {
     consumer_latitude?: number;
     consumer_longitude?: number;
   }): Promise<Order> {
-    const res = await fetch(`${API_BASE}/orders`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || 'Failed to place order');
-    }
-    return res.json();
+    const { data: { session } } = await supabase.auth.getSession();
+    const { data: profile } = await supabase.from('profiles').select('id, display_name').eq('supabase_auth_id', session?.user?.id).single();
+    
+    const cart = await this.getCart();
+    if (!cart.items.length) throw new Error("Cart is empty");
+    
+    const farmerId = cart.items[0].farmer_id;
+    const { data: farm } = await supabase.from('farms').select('id, farm_name').eq('owner_id', farmerId).single();
+    
+    const { data: order, error } = await supabase.from('orders').insert({
+      order_number: 'FB-' + Math.floor(1000 + Math.random() * 9000),
+      buyer_id: profile?.id,
+      farmer_id: farmerId,
+      farm_id: farm?.id,
+      status: 'pending_farmer_confirmation',
+      fulfilment_type: data.fulfilment_type,
+      delivery_area: data.delivery_area,
+      delivery_address: data.delivery_address,
+      delivery_contact_phone: data.delivery_contact_phone,
+      delivery_slot: data.delivery_slot,
+      subtotal: cart.subtotal,
+      delivery_fee: cart.delivery_fee,
+      platform_fee: cart.platform_fee,
+      total_amount: cart.total,
+      payment_status: 'simulated_pending'
+    }).select().single();
+    
+    if (error) throw new Error(error.message);
+    
+    const orderItems = cart.items.map(item => ({
+      order_id: order.id,
+      product_id: item.product_id,
+      product_name_snapshot: item.product_name,
+      unit_snapshot: item.unit,
+      unit_price_snapshot: item.unit_price,
+      quantity: item.quantity,
+      line_total: item.line_total
+    }));
+    await supabase.from('order_items').insert(orderItems);
+    
+    await this.clearCart();
+    return order as any;
   },
 
   async acceptOrder(orderId: string): Promise<Order> {
-    const res = await fetch(`${API_BASE}/orders/${orderId}/accept`, {
-      method: 'POST',
-      headers: getHeaders(),
-    });
-    return res.json();
+    const { data, error } = await supabase.from('orders').update({ status: 'accepted' }).eq('id', orderId).select().single();
+    if (error) throw new Error(error.message);
+    return data as any;
   },
 
   async rejectOrder(orderId: string, reason?: string): Promise<Order> {
-    const res = await fetch(`${API_BASE}/orders/${orderId}/reject?reason=${encodeURIComponent(reason || '')}`, {
-      method: 'POST',
-      headers: getHeaders(),
-    });
-    return res.json();
+    const { data, error } = await supabase.from('orders').update({ status: 'rejected', rejection_reason: reason }).eq('id', orderId).select().single();
+    if (error) throw new Error(error.message);
+    return data as any;
   },
 
   async updateOrderStatus(orderId: string, status: string, reason?: string): Promise<Order> {
-    const res = await fetch(`${API_BASE}/orders/${orderId}/status`, {
-      method: 'POST',
-      headers: getHeaders(),
-      body: JSON.stringify({ status, reason }),
-    });
-    return res.json();
+    const { data, error } = await supabase.from('orders').update({ status, rejection_reason: reason }).eq('id', orderId).select().single();
+    if (error) throw new Error(error.message);
+    return data as any;
   },
 
   // --- REVIEWS ---

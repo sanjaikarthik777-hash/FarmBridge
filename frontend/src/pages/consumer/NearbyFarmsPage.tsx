@@ -93,14 +93,21 @@ export const NearbyFarmsPage: React.FC<NearbyFarmsPageProps> = ({
   }, [products, activeFarmId]);
 
   // Demo Farm Photos mapping
-  const getFarmCoverImage = (index: number) => {
-    const images = [
-      'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?w=800&auto=format&fit=crop',
-    ];
-    return images[index % images.length];
+  const getFarmCoverImage = (farmOrIndex: any) => {
+    let name = '';
+    if (typeof farmOrIndex === 'object' && farmOrIndex?.farm_name) {
+      name = farmOrIndex.farm_name.toLowerCase();
+    } else if (typeof farmOrIndex === 'string') {
+      name = farmOrIndex.toLowerCase();
+    }
+    if (name.includes('thennam') || name.includes('thoppu') || name.includes('coconut')) {
+      return '/images/farm-thennam-thoppu.jpg';
+    }
+    if (name.includes('anaimalai') || name.includes('valley') || name.includes('organic')) {
+      return '/images/farm-anaimalai-valley.jpg';
+    }
+    const idx = typeof farmOrIndex === 'number' ? farmOrIndex : 0;
+    return idx % 2 === 0 ? '/images/farm-thennam-thoppu.jpg' : '/images/farm-anaimalai-valley.jpg';
   };
 
   return (
@@ -127,7 +134,7 @@ export const NearbyFarmsPage: React.FC<NearbyFarmsPageProps> = ({
           <div className="bg-white rounded-3xl border border-[#E5E9E1] overflow-hidden shadow-xs">
             <div className="relative h-48 sm:h-64 bg-[#245C3A] overflow-hidden">
               <img
-                src={getFarmCoverImage(0)}
+                src={getFarmCoverImage(currentFarm)}
                 alt={currentFarm.farm_name}
                 className="w-full h-full object-cover opacity-60"
               />
@@ -287,9 +294,12 @@ export const NearbyFarmsPage: React.FC<NearbyFarmsPageProps> = ({
               >
                 <div className="w-full aspect-[4/5] rounded-[2.5rem] overflow-hidden relative mb-4">
                   <img 
-                    src={getFarmCoverImage(idx)} 
+                    src={getFarmCoverImage(farm)} 
                     className="w-full h-full object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-110"
                     alt={farm.farm_name}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = '/images/farm-thennam-thoppu.jpg';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#202820]/90 via-[#202820]/20 to-transparent opacity-90 transition-opacity duration-500" />
                   <div className="absolute inset-0 bg-[#245C3A]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
