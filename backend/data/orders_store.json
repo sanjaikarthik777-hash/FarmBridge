@@ -1,0 +1,194 @@
+{
+  "o1": {
+    "id": "o1",
+    "order_number": "FB-2026-001",
+    "buyer_id": "b1000000-0000-0000-0000-000000000001",
+    "buyer_name": "Kavitha Sundaram",
+    "farmer_id": "f1000000-0000-0000-0000-000000000001",
+    "farmer_name": "Murugan Palanisamy",
+    "farm_id": "fa111111-1111-1111-1111-111111111111",
+    "farm_name": "Thennam Thoppu Natural Farm",
+    "status": "completed",
+    "fulfilment_type": "delivery",
+    "delivery_area": "Mahalingapuram, Pollachi",
+    "delivery_address": "Door 14, 2nd Cross, Mahalingapuram, Pollachi",
+    "delivery_contact_phone": "+91 97890 41235",
+    "delivery_slot": "Morning (7:00 AM - 10:00 AM)",
+    "subtotal": 154.0,
+    "delivery_fee": 25.0,
+    "platform_fee": 5.0,
+    "total_amount": 184.0,
+    "currency": "INR",
+    "payment_status": "simulated_paid",
+    "items": [
+      {
+        "id": "oi1",
+        "product_id": "p1",
+        "product_name_snapshot": "Country Tomatoes (\u0ba8\u0bbe\u0b9f\u0bcd\u0b9f\u0bc1 \u0ba4\u0b95\u0bcd\u0b95\u0bbe\u0bb3\u0bbf)",
+        "unit_snapshot": "kg",
+        "unit_price_snapshot": 32.0,
+        "quantity": 2.0,
+        "line_total": 64.0
+      },
+      {
+        "id": "oi2",
+        "product_id": "p2",
+        "product_name_snapshot": "Pollachi Sweet Tender Coconut (\u0b87\u0bb3\u0ba8\u0bc0\u0bb0\u0bcd)",
+        "unit_snapshot": "piece",
+        "unit_price_snapshot": 45.0,
+        "quantity": 2.0,
+        "line_total": 90.0
+      }
+    ],
+    "events": [
+      {
+        "id": "ev1",
+        "event_type": "created",
+        "from_status": null,
+        "to_status": "pending_farmer_confirmation",
+        "note": "Order placed by buyer via Simulated UPI",
+        "created_at": "2026-10-09T11:41:40.427910",
+        "actor_role": "consumer"
+      },
+      {
+        "id": "ev2",
+        "event_type": "accepted",
+        "from_status": "pending_farmer_confirmation",
+        "to_status": "accepted",
+        "note": "Farmer confirmed stock availability",
+        "created_at": "2026-10-09T12:11:40.427913",
+        "actor_role": "farmer"
+      },
+      {
+        "id": "ev3",
+        "event_type": "prepared",
+        "from_status": "accepted",
+        "to_status": "ready_for_pickup",
+        "note": "Harvested fresh and packed",
+        "created_at": "2026-10-09T13:41:40.427915",
+        "actor_role": "farmer"
+      },
+      {
+        "id": "ev4",
+        "event_type": "delivery",
+        "from_status": "ready_for_pickup",
+        "to_status": "delivered",
+        "note": "Delivered to buyer doorstep",
+        "created_at": "2026-10-09T14:41:40.427919",
+        "actor_role": "delivery"
+      },
+      {
+        "id": "ev5",
+        "event_type": "completed",
+        "from_status": "delivered",
+        "to_status": "completed",
+        "note": "Buyer confirmed produce quality",
+        "created_at": "2026-10-09T15:41:40.427921",
+        "actor_role": "consumer"
+      }
+    ],
+    "created_at": "2026-10-09T11:41:40.427922",
+    "updated_at": "2026-10-09T15:41:40.427924"
+  },
+  "o2": {
+    "id": "o2",
+    "order_number": "FB-2026-002",
+    "buyer_id": "b1000000-0000-0000-0000-000000000001",
+    "buyer_name": "Kavitha Sundaram",
+    "farmer_id": "f1000000-0000-0000-0000-000000000001",
+    "farmer_name": "Murugan Palanisamy",
+    "farm_id": "fa111111-1111-1111-1111-111111111111",
+    "farm_name": "Thennam Thoppu Natural Farm",
+    "status": "pending_farmer_confirmation",
+    "fulfilment_type": "delivery",
+    "delivery_area": "Venkatesa Colony, Pollachi",
+    "delivery_address": "Flat 3B, Sri Krishna Apartments, Pollachi",
+    "delivery_contact_phone": "+91 97890 41235",
+    "delivery_slot": "Evening (4:00 PM - 7:00 PM)",
+    "subtotal": 96.0,
+    "delivery_fee": 25.0,
+    "platform_fee": 5.0,
+    "total_amount": 126.0,
+    "currency": "INR",
+    "payment_status": "simulated_paid",
+    "items": [
+      {
+        "id": "oi3",
+        "product_id": "p1",
+        "product_name_snapshot": "Country Tomatoes (\u0ba8\u0bbe\u0b9f\u0bcd\u0b9f\u0bc1 \u0ba4\u0b95\u0bcd\u0b95\u0bbe\u0bb3\u0bbf)",
+        "unit_snapshot": "kg",
+        "unit_price_snapshot": 32.0,
+        "quantity": 3.0,
+        "line_total": 96.0
+      }
+    ],
+    "events": [
+      {
+        "id": "ev21",
+        "event_type": "created",
+        "from_status": null,
+        "to_status": "pending_farmer_confirmation",
+        "note": "Order placed by buyer",
+        "created_at": "2026-10-10T14:56:40.427928",
+        "actor_role": "consumer"
+      }
+    ],
+    "created_at": "2026-10-10T14:56:40.427929",
+    "updated_at": "2026-10-10T14:56:40.427931"
+  },
+  "o-403c989a": {
+    "id": "o-403c989a",
+    "order_number": "FB-2026-103",
+    "buyer_id": "b1000000-0000-0000-0000-000000000001",
+    "buyer_name": "Kavitha Sundaram (\u0b95\u0bb5\u0bbf\u0ba4\u0bbe)",
+    "farmer_id": "f1000000-0000-0000-0000-000000000001",
+    "farmer_name": "Murugan Palanisamy",
+    "farm_id": "fa111111-1111-1111-1111-111111111111",
+    "farm_name": "Thennam Thoppu Natural Farm",
+    "status": "accepted",
+    "fulfilment_type": "delivery",
+    "delivery_area": "Pollachi Central",
+    "delivery_address": "Aliyar Road, Pollachi",
+    "delivery_contact_phone": "+91 97890 41235",
+    "delivery_slot": "Morning (6:30 AM - 9:00 AM)",
+    "subtotal": 64.0,
+    "delivery_fee": 25.0,
+    "platform_fee": 5.0,
+    "total_amount": 94.0,
+    "currency": "INR",
+    "payment_status": "simulated_paid",
+    "items": [
+      {
+        "id": "oi-fc3d7769",
+        "product_id": "11111111-1111-1111-1111-111111111111",
+        "product_name_snapshot": "Country Tomatoes",
+        "unit_snapshot": "kg",
+        "unit_price_snapshot": 32.0,
+        "quantity": 2.0,
+        "line_total": 64.0
+      }
+    ],
+    "events": [
+      {
+        "id": "ev-cc207285",
+        "event_type": "order_placed",
+        "from_status": null,
+        "to_status": "pending_farmer_confirmation",
+        "note": "Order confirmed with simulated UPI Direct. Transparent fee: \u20b95.0",
+        "created_at": "2026-10-10T15:43:54.212465",
+        "actor_role": "consumer"
+      },
+      {
+        "id": "ev-9ad4a5f6",
+        "event_type": "farmer_accepted",
+        "from_status": "pending_farmer_confirmation",
+        "to_status": "accepted",
+        "note": "Farmer confirmed fresh produce availability and accepted order.",
+        "created_at": "2026-10-10T15:44:23.650741",
+        "actor_role": "farmer"
+      }
+    ],
+    "created_at": "2026-10-10T15:43:54.212465",
+    "updated_at": "2026-10-10T15:44:23.650745"
+  }
+}

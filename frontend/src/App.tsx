@@ -27,7 +27,7 @@ import {
   AuthSession
 } from './types';
 import { Language, translations } from './i18n/translations';
-import { api, setAuthToken } from './services/api';
+import { api, setAuthToken, setSupabaseUserId } from './services/api';
 import { supabase } from './utils/supabase/client';
 
 export function App() {
@@ -353,6 +353,7 @@ export function App() {
       console.error('Backend logout error', e);
     }
     setAuthToken(null);
+    setSupabaseUserId(null);
     setCurrentProfile(null);
     setActiveTab('home');
     window.history.replaceState({}, document.title, window.location.pathname);

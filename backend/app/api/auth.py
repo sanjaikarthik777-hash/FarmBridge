@@ -317,6 +317,11 @@ def supabase_sync(
         if data.display_name and (not matched_profile.get("display_name") or matched_profile.get("display_name") == "FarmBridge Consumer"):
             matched_profile["display_name"] = data.display_name
 
+    if data.profile_id:
+        store.profiles[data.profile_id] = matched_profile
+        active_sessions[data.profile_id] = matched_profile["id"]
+    matched_profile["supabase_auth_id"] = data.supabase_id
+
     # Create session token and map in active_sessions
     token = f"fb_sess_{uuid.uuid4().hex}"
     active_sessions[token] = matched_profile["id"]
@@ -407,6 +412,11 @@ def supabase_farmer_sync(
             "created_at": datetime.now()
         }
         store.profiles[data.supabase_id] = matched_profile
+
+    if data.profile_id:
+        store.profiles[data.profile_id] = matched_profile
+        active_sessions[data.profile_id] = matched_profile["id"]
+    matched_profile["supabase_auth_id"] = data.supabase_id
 
     # Issue session token
     token = f"fb_sess_{uuid.uuid4().hex}"

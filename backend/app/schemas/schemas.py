@@ -81,6 +81,7 @@ class ConsumerRegisterRequest(BaseModel):
 
 class SupabaseSyncRequest(BaseModel):
     supabase_id: str
+    profile_id: Optional[str] = None
     email: Optional[str] = None
     display_name: Optional[str] = None
     avatar_url: Optional[str] = None
@@ -237,6 +238,16 @@ class OrderCreate(BaseModel):
     payment_method: str = "demo_pay"
     consumer_latitude: Optional[float] = None
     consumer_longitude: Optional[float] = None
+    buyer_id: Optional[str] = None
+    farmer_id: Optional[str] = None
+    farm_id: Optional[str] = None
+    farm_name: Optional[str] = None
+    farmer_name: Optional[str] = None
+    items: Optional[List[Dict[str, Any]]] = None
+    subtotal: Optional[float] = None
+    delivery_fee: Optional[float] = None
+    platform_fee: Optional[float] = None
+    total_amount: Optional[float] = None
 
 class OrderItemResponse(BaseModel):
     id: str

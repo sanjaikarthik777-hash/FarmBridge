@@ -1,5 +1,8 @@
 import uuid
 import math
+import os
+import json
+from pathlib import Path
 from datetime import datetime, date, timedelta
 from typing import Dict, List, Optional, Any
 
@@ -155,15 +158,15 @@ class DataStore:
             "c5": {"id": "c5", "name": "Cold-Pressed Oils & Spices", "name_ta": "மரச்செக்கு எண்ணெய்கள்", "description": "Traditional wood-pressed virgin oils", "icon": "Droplets", "is_active": True}
         }
 
-        # 4. PRODUCTS (Associated with Farm Coordinates)
+        # 4. PRODUCTS (Associated with Farm Coordinates & matching Supabase UUIDs)
         self.products: Dict[str, Dict[str, Any]] = {
-            "p1": {
-                "id": "p1",
+            "11111111-1111-1111-1111-111111111111": {
+                "id": "11111111-1111-1111-1111-111111111111",
                 "farmer_id": "f1000000-0000-0000-0000-000000000001",
                 "farm_id": "fa111111-1111-1111-1111-111111111111",
                 "farm_name": "Thennam Thoppu Natural Farm",
                 "farmer_name": "Murugan Palanisamy",
-                "category_id": "c1",
+                "category_id": "c1111111-1111-1111-1111-111111111111",
                 "name": "Country Tomatoes (நாட்டு தக்காளி)",
                 "name_ta": "நாட்டு தக்காளி",
                 "description": "Naturally sun-ripened country tomatoes with characteristic tanginess. Harvested early morning today.",
@@ -182,13 +185,13 @@ class DataStore:
                 "created_at": datetime.now() - timedelta(days=2),
                 "updated_at": datetime.now() - timedelta(hours=3)
             },
-            "p2": {
-                "id": "p2",
+            "22222222-2222-2222-2222-222222222222": {
+                "id": "22222222-2222-2222-2222-222222222222",
                 "farmer_id": "f1000000-0000-0000-0000-000000000001",
                 "farm_id": "fa111111-1111-1111-1111-111111111111",
                 "farm_name": "Thennam Thoppu Natural Farm",
                 "farmer_name": "Murugan Palanisamy",
-                "category_id": "c3",
+                "category_id": "c3333333-3333-3333-3333-333333333333",
                 "name": "Pollachi Sweet Tender Coconut (இளநீர்)",
                 "name_ta": "பொள்ளாச்சி இளநீர்",
                 "description": "Authentic Pollachi tall variety tender coconut, full of natural electrolytes and over 450ml sweet water.",
@@ -207,13 +210,13 @@ class DataStore:
                 "created_at": datetime.now() - timedelta(days=3),
                 "updated_at": datetime.now() - timedelta(hours=4)
             },
-            "p3": {
-                "id": "p3",
+            "33333333-3333-3333-3333-333333333333": {
+                "id": "33333333-3333-3333-3333-333333333333",
                 "farmer_id": "f2000000-0000-0000-0000-000000000002",
                 "farm_id": "fa222222-2222-2222-2222-222222222222",
                 "farm_name": "Anaimalai Organic Valley",
                 "farmer_name": "Lakshmi Ramasamy",
-                "category_id": "c1",
+                "category_id": "c1111111-1111-1111-1111-111111111111",
                 "name": "Small Red Shallots (சின்ன வெங்காயம்)",
                 "name_ta": "சாம்பார் சின்ன வெங்காயம்",
                 "description": "High-flavor small onions grown in red loam soil. Hand-sorted and naturally cured for lasting freshness.",
@@ -232,13 +235,13 @@ class DataStore:
                 "created_at": datetime.now() - timedelta(days=4),
                 "updated_at": datetime.now() - timedelta(hours=6)
             },
-            "p4": {
-                "id": "p4",
+            "44444444-4444-4444-4444-444444444444": {
+                "id": "44444444-4444-4444-4444-444444444444",
                 "farmer_id": "f2000000-0000-0000-0000-000000000002",
                 "farm_id": "fa222222-2222-2222-2222-222222222222",
                 "farm_name": "Anaimalai Organic Valley",
                 "farmer_name": "Lakshmi Ramasamy",
-                "category_id": "c2",
+                "category_id": "c2222222-2222-2222-2222-222222222222",
                 "name": "Anaimalai Red Bananas (செவ்வாழை)",
                 "name_ta": "ஆனைமலை செவ்வாழை",
                 "description": "Nutrient dense native red bananas ripened naturally without calcium carbide or artificial chemicals.",
@@ -257,13 +260,13 @@ class DataStore:
                 "created_at": datetime.now() - timedelta(days=1),
                 "updated_at": datetime.now() - timedelta(hours=2)
             },
-            "p5": {
-                "id": "p5",
+            "55555555-5555-5555-5555-555555555555": {
+                "id": "55555555-5555-5555-5555-555555555555",
                 "farmer_id": "f1000000-0000-0000-0000-000000000001",
                 "farm_id": "fa111111-1111-1111-1111-111111111111",
                 "farm_name": "Thennam Thoppu Natural Farm",
                 "farmer_name": "Murugan Palanisamy",
-                "category_id": "c5",
+                "category_id": "c5555555-5555-5555-5555-555555555555",
                 "name": "Wood-Pressed Virgin Coconut Oil (மரச்செக்கு எண்ணெய்)",
                 "name_ta": "மரச்செக்கு தேங்காய் எண்ணெய்",
                 "description": "Pressed in traditional Vaagai wood rotaries using sun-dried premium copra. Zero chemicals, zero adulteration.",
@@ -283,6 +286,13 @@ class DataStore:
                 "updated_at": datetime.now() - timedelta(days=1)
             }
         }
+
+        # Legacy aliases so any existing requests for p1..p5 or c1..c5 resolve properly
+        self.products["p1"] = self.products["11111111-1111-1111-1111-111111111111"]
+        self.products["p2"] = self.products["22222222-2222-2222-2222-222222222222"]
+        self.products["p3"] = self.products["33333333-3333-3333-3333-333333333333"]
+        self.products["p4"] = self.products["44444444-4444-4444-4444-444444444444"]
+        self.products["p5"] = self.products["55555555-5555-5555-5555-555555555555"]
 
         # 5. CARTS: buyer_id -> list of items
         self.carts: Dict[str, List[Dict[str, Any]]] = {
@@ -496,6 +506,35 @@ class DataStore:
                 "created_at": datetime.now() - timedelta(days=58)
             }
         ]
+
+        # Load persisted orders from disk (if any exist)
+        self.load_orders()
+
+    def save_orders(self):
+        try:
+            data_dir = Path(__file__).resolve().parent.parent.parent / "data"
+            data_dir.mkdir(parents=True, exist_ok=True)
+            orders_file = data_dir / "orders_store.json"
+            def default_serializer(o):
+                if isinstance(o, (datetime, date)):
+                    return o.isoformat()
+                return str(o)
+            with open(orders_file, "w", encoding="utf-8") as f:
+                json.dump(self.orders, f, default=default_serializer, indent=2)
+        except Exception as e:
+            print(f"Error persisting orders to disk: {e}")
+
+    def load_orders(self):
+        try:
+            orders_file = Path(__file__).resolve().parent.parent.parent / "data" / "orders_store.json"
+            if orders_file.exists():
+                with open(orders_file, "r", encoding="utf-8") as f:
+                    loaded = json.load(f)
+                    if isinstance(loaded, dict) and loaded:
+                        for k, v in loaded.items():
+                            self.orders[k] = v
+        except Exception as e:
+            print(f"Error loading orders from disk: {e}")
 
     # --- GEOSPATIAL HELPER METHODS ---
     def get_nearby_farms(self, user_lat: float, user_lon: float, radius_km: Optional[float] = None) -> List[Dict[str, Any]]:
