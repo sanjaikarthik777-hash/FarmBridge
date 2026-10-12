@@ -190,5 +190,60 @@
     ],
     "created_at": "2026-10-10T15:43:54.212465",
     "updated_at": "2026-10-10T15:44:23.650745"
+  },
+  "o-c5226cfc": {
+    "id": "o-c5226cfc",
+    "order_number": "FB-2026-104",
+    "buyer_id": "89575a6d-a504-4521-92ac-ab9d17af56bc",
+    "buyer_name": "vishmitha",
+    "farmer_id": "f1000000-0000-0000-0000-000000000001",
+    "farmer_name": "Murugan Palanisamy",
+    "farm_id": "fa111111-1111-1111-1111-111111111111",
+    "farm_name": "Thennam Thoppu Natural Farm",
+    "status": "accepted",
+    "fulfilment_type": "delivery",
+    "delivery_area": "Pollachi Central",
+    "delivery_address": "Pollachi Central (\u0b89\u0bb4\u0bb5\u0bb0\u0bcd \u0b9a\u0ba8\u0bcd\u0ba4\u0bc8)",
+    "delivery_contact_phone": "+91 97890 41235",
+    "delivery_slot": "Morning (6:30 AM - 9:00 AM)",
+    "subtotal": 32.0,
+    "delivery_fee": 25.0,
+    "platform_fee": 5.0,
+    "total_amount": 62.0,
+    "currency": "INR",
+    "payment_status": "simulated_paid",
+    "items": [
+      {
+        "id": "ci-glos6cr",
+        "product_id": "11111111-1111-1111-1111-111111111111",
+        "product_name_snapshot": "Country Tomatoes (\u0ba8\u0bbe\u0b9f\u0bcd\u0b9f\u0bc1 \u0ba4\u0b95\u0bcd\u0b95\u0bbe\u0bb3\u0bbf)",
+        "unit_snapshot": "kg",
+        "unit_price_snapshot": 32.0,
+        "quantity": 1.0,
+        "line_total": 32.0
+      }
+    ],
+    "events": [
+      {
+        "id": "ev-a9b1127e",
+        "event_type": "order_placed",
+        "from_status": null,
+        "to_status": "pending_farmer_confirmation",
+        "note": "Order confirmed with simulated Cash on Delivery. Transparent fee: \u20b95.0",
+        "created_at": "2026-10-10T15:48:25.696205",
+        "actor_role": "consumer"
+      },
+      {
+        "id": "ev-3c150946",
+        "event_type": "farmer_accepted",
+        "from_status": "pending_farmer_confirmation",
+        "to_status": "accepted",
+        "note": "Farmer confirmed fresh produce availability and accepted order.",
+        "created_at": "2026-10-10T15:48:59.907754",
+        "actor_role": "farmer"
+      }
+    ],
+    "created_at": "2026-10-10T15:48:25.696205",
+    "updated_at": "2026-10-10T15:48:59.907766"
   }
 }

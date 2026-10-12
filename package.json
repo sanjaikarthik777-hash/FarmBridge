@@ -4,6 +4,7 @@
   "description": "FarmBridge AgriTech Marketplace Root Scripts",
   "scripts": {
     "dev": "npm --prefix frontend run dev",
+    "serve:offline": "npx -y serve offline-dashboard -l 5000",
     "build": "npm --prefix frontend run build",
     "lint": "npm --prefix frontend run lint"
   },

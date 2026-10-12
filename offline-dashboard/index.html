@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>FarmDirect Farmer — Offline-First Dashboard</title>
+  
+  <!-- PWA Meta Tags -->
+  <meta name="description" content="Offline-first direct farm-to-consumer dashboard for managing produce, stock, orders, and sales without internet.">
+  <meta name="theme-color" content="#1b4332">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="FarmDirect">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
+  
+  <!-- Pure Vanilla CSS - Zero external CDNs or online fonts -->
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo-icon">
+          <img src="./icons/logo.png" alt="FarmDirect App Logo" class="brand-logo-img">
+        </div>
+        <div class="brand-info">
+          <span class="brand-title">FarmDirect</span>
+          <span class="brand-subtitle">Farmer Portal</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-item nav-active" data-view-target="dashboard">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="#products" class="nav-item" data-view-target="products">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          <span>My Products</span>
+        </a>
+
+        <a href="#orders" class="nav-item" data-view-target="orders">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          <span>Farmer Orders</span>
+        </a>
+
+        <a href="#inventory" class="nav-item" data-view-target="inventory">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M12 12v10"/></svg>
+          <span>Inventory</span>
+        </a>
+
+        <a href="#reports" class="nav-item" data-view-target="reports">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Sales Report</span>
+        </a>
+
+        <a href="#settings" class="nav-item" data-view-target="settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span>Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="farm-badge-card">
+          <div class="farm-badge-label">Active Farm</div>
+          <div class="farm-badge-name" id="sidebar-farm-name">Thennam Thoppu Natural Farm</div>
+          <div class="farm-badge-loc">Aliyar Road, Pollachi</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN APP VIEWPORT -->
+    <div class="main-viewport">
+      
+      <!-- TOP HEADER BAR -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="mobile-toggle-btn" id="mobile-toggle-btn" aria-label="Toggle Navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+          </button>
+          
+          <div class="header-title-block">
+            <h1 class="header-farm-title" id="header-farm-name">Thennam Thoppu Natural Farm</h1>
+            <span class="header-date" id="current-date-display">Loading date...</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Offline / Online Indicator Pill -->
+          <div class="status-pill status-online" id="connectivity-status-pill">
+            <span class="status-indicator-dot"></span>
+            <span id="connectivity-status-text">Internet Connected</span>
+          </div>
+
+          <!-- Cloud Auto-Sync Button -->
+          <button class="btn btn-secondary btn-sm btn-sync-trigger" id="header-sync-btn" title="Cloud Synchronization & Auto-Sync Engine">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span class="hide-mobile">Sync</span>
+          </button>
+
+          <!-- PWA Install Button -->
+          <button class="btn btn-success btn-sm hidden" id="btn-install-pwa" title="Install App to Home Screen / Desktop">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Install App</span>
+          </button>
+
+          <!-- Quick Add Product Button -->
+          <button class="btn btn-primary btn-sm" onclick="ProductsModule.openAddProductModal()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            <span>Add Product</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- NO INTERNET CONNECTION NOTICE (shown when offline) -->
+      <div class="offline-banner hidden" id="offline-notice-banner">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <strong>No Internet Connection:</strong> You can continue using all dashboard features normally. Any products added, stock adjustments, and orders managed are safely saved on this device and will automatically sync once an internet connection is detected.
+        </div>
+      </div>
+
+      <!-- MAIN CONTENT CONTAINER -->
+      <main class="content-container">
+
+        <!-- =========================================================
+             1. DASHBOARD OVERVIEW VIEW
+             ========================================================= -->
+        <section class="view-section" id="view-dashboard">
+          
+          <!-- Welcome Hero Banner -->
+          <div class="welcome-hero-banner">
+            <div class="welcome-content">
+              <h2>Welcome back, Farmer!</h2>
+              <p>Direct Farm-to-Consumer Portal for Pollachi & Coimbatore Region. Manage your field harvest, stock availability, incoming customer orders, and local sales completely offline.</p>
+              <div class="welcome-actions">
+                <button class="btn btn-white" onclick="ProductsModule.openAddProductModal()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                  Add New Product
+                </button>
+                <button class="btn btn-glass" onclick="OrdersModule.openDemoOrderModal()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                  Create Demo Order
+                </button>
+              </div>
+            </div>
+            <div class="welcome-art">
+              <svg width="140" height="140" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.2">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- 6 KEY STATISTICS CARDS -->
+          <div class="stats-grid">
+            
+            <div class="stat-card">
+              <div class="stat-icon-wrap stat-icon-green">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Total Products</span>
+                <span class="stat-value" id="dash-stat-products">0</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrap stat-icon-blue">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M12 12v10"/></svg>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Available Stock</span>
+                <span class="stat-value" id="dash-stat-stock">0</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrap stat-icon-purple">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Total Orders</span>
+                <span class="stat-value" id="dash-stat-orders">0</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrap stat-icon-amber">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Pending Orders</span>
+                <span class="stat-value text-amber" id="dash-stat-pending">0</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrap stat-icon-emerald">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Completed Orders</span>
+                <span class="stat-value text-success" id="dash-stat-completed">0</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrap stat-icon-gold">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Completed Sales</span>
+                <span class="stat-value text-price" id="dash-stat-sales">₹0.00</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- DASHBOARD TWO-COLUMN SECTION -->
+          <div class="dashboard-split-grid">
+            
+            <!-- Recent Orders Section -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <div>
+                  <h3 class="panel-title">Recent Customer Orders</h3>
+                  <span class="panel-subtitle">Latest incoming requests & local demo orders</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="App.navigateTo('orders')">View All</button>
+              </div>
+              <div class="panel-body">
+                <div id="dashboard-recent-orders-list">
+                  <div class="loading-placeholder">Loading recent orders...</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Product Overview Cards -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <div>
+                  <h3 class="panel-title">Field Harvest Overview</h3>
+                  <span class="panel-subtitle">Current stock and price levels</span>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="App.navigateTo('products')">View Catalogue</button>
+              </div>
+              <div class="panel-body">
+                <div class="dash-products-grid" id="dashboard-products-overview-grid">
+                  <div class="loading-placeholder">Loading products...</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- =========================================================
+             2. MY PRODUCTS VIEW
+             ========================================================= -->
+        <section class="view-section hidden" id="view-products">
+          
+          <div class="section-top-bar">
+            <div>
+              <h2 class="section-title">My Agricultural Products</h2>
+              <p class="section-subtitle">Add produce, adjust harvest selling prices, update field stock, and mark availability.</p>
+            </div>
+            <button class="btn btn-primary" onclick="ProductsModule.openAddProductModal()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+              Add New Product
+            </button>
+          </div>
+
+          <!-- Product Filters -->
+          <div class="filters-card">
+            <div class="filter-group-search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="product-search-input" placeholder="Search produce by name or notes...">
+            </div>
+
+            <div class="filter-group-selects">
+              <select id="product-category-filter">
+                <option value="all">All Categories</option>
+                <option value="Vegetables">Vegetables</option>
+                <option value="Fruits">Fruits</option>
+                <option value="Tubers">Tubers</option>
+                <option value="Greens">Greens</option>
+                <option value="Grains">Grains</option>
+                <option value="Dairy">Dairy</option>
+                <option value="Other">Other</option>
+              </select>
+
+              <select id="product-stock-filter">
+                <option value="all">All Stock Statuses</option>
+                <option value="in_stock">In Stock</option>
+                <option value="low_stock">Low Stock (≤ Threshold)</option>
+                <option value="out_of_stock">Out of Stock (0)</option>
+                <option value="unavailable">Marked Unavailable</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Products Grid -->
+          <div class="products-grid" id="products-grid">
+            <div class="loading-placeholder">Loading products...</div>
+          </div>
+
+        </section>
+
+        <!-- =========================================================
+             3. FARMER ORDERS VIEW
+             ========================================================= -->
+        <section class="view-section hidden" id="view-orders">
+          
+          <div class="section-top-bar">
+            <div>
+              <h2 class="section-title">Farmer Order Management</h2>
+              <p class="section-subtitle">Review incoming customer orders, accept with automatic stock reservation, pack, and complete sales.</p>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-secondary" onclick="OrdersModule.quickGenerateRandomDemoOrder()" title="Instantly creates a realistic local customer order">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                Quick Demo Order
+              </button>
+              <button class="btn btn-primary" onclick="OrdersModule.openDemoOrderModal()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                Custom Demo Order
+              </button>
+            </div>
+          </div>
+
+          <!-- Order Status Tabs & Search -->
+          <div class="orders-toolbar">
+            <div class="order-filter-tabs">
+              <button class="order-filter-tab active" data-status="all">All Orders</button>
+              <button class="order-filter-tab" data-status="pending">Pending</button>
+              <button class="order-filter-tab" data-status="accepted">Accepted</button>
+              <button class="order-filter-tab" data-status="packed">Packed</button>
+              <button class="order-filter-tab" data-status="completed">Completed</button>
+              <button class="order-filter-tab" data-status="rejected">Rejected</button>
+              <button class="order-filter-tab" data-status="demo">Demo Only</button>
+            </div>
+
+            <div class="filter-group-search max-w-xs">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="order-search-input" placeholder="Search order ID or buyer...">
+            </div>
+          </div>
+
+          <!-- Orders List Container -->
+          <div class="orders-list-wrap" id="orders-list-container">
+            <div class="loading-placeholder">Loading orders...</div>
+          </div>
+
+        </section>
+
+        <!-- =========================================================
+             4. INVENTORY VIEW
+             ========================================================= -->
+        <section class="view-section hidden" id="view-inventory">
+          
+          <div class="section-top-bar">
+            <div>
+              <h2 class="section-title">Inventory & Field Stock</h2>
+              <p class="section-subtitle">Real-time stock quantities, minimum threshold alerts, harvest logs, and manual adjustments.</p>
+            </div>
+          </div>
+
+          <!-- Inventory Summary Stats -->
+          <div class="inventory-stats-grid">
+            <div class="inv-kpi-card">
+              <span class="inv-kpi-label">Adequate Stock</span>
+              <span class="inv-kpi-val text-success" id="inv-stat-healthy">0</span>
+            </div>
+            <div class="inv-kpi-card">
+              <span class="inv-kpi-label">Low Stock (≤ Threshold)</span>
+              <span class="inv-kpi-val text-amber" id="inv-stat-low">0</span>
+            </div>
+            <div class="inv-kpi-card">
+              <span class="inv-kpi-label">Out of Stock (0)</span>
+              <span class="inv-kpi-val text-danger" id="inv-stat-out">0</span>
+            </div>
+            <div class="inv-kpi-card">
+              <span class="inv-kpi-label">Total Field Units</span>
+              <span class="inv-kpi-val" id="inv-stat-total">0</span>
+            </div>
+          </div>
+
+          <!-- Out of Stock / Low Stock Alert Notices -->
+          <div id="inventory-alerts-container" class="hidden"></div>
+
+          <!-- Inventory Table Panel -->
+          <div class="panel-card mt-4">
+            <div class="panel-header">
+              <h3 class="panel-title">Current Produce Inventory</h3>
+              <div class="d-flex gap-2">
+                <input type="text" id="inventory-search-input" placeholder="Search crop..." class="input-sm">
+                <select id="inventory-cat-filter" class="input-sm">
+                  <option value="all">All Categories</option>
+                  <option value="Vegetables">Vegetables</option>
+                  <option value="Fruits">Fruits</option>
+                  <option value="Tubers">Tubers</option>
+                  <option value="Greens">Greens</option>
+                  <option value="Grains">Grains</option>
+                  <option value="Dairy">Dairy</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="panel-body p-0">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Category</th>
+                      <th class="text-right">Current Stock</th>
+                      <th class="text-right">Min Threshold</th>
+                      <th>Status</th>
+                      <th class="text-right">Selling Price</th>
+                      <th class="text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="inventory-table-tbody">
+                    <tr><td colspan="7" class="text-center py-4">Loading stock...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stock Movement Log Panel -->
+          <div class="panel-card mt-4">
+            <div class="panel-header">
+              <div>
+                <h3 class="panel-title">Stock Movement Audit History</h3>
+                <span class="panel-subtitle">Chronological ledger of harvest intakes, reservations, and cancellations</span>
+              </div>
+            </div>
+            <div class="panel-body p-0">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Date & Time</th>
+                      <th>Product</th>
+                      <th class="text-right">Previous</th>
+                      <th class="text-right">Change (Delta)</th>
+                      <th class="text-right">New Stock</th>
+                      <th>Audit Reason</th>
+                    </tr>
+                  </thead>
+                  <tbody id="inventory-logs-tbody">
+                    <tr><td colspan="6" class="text-center py-4">Loading inventory history...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =========================================================
+             5. SALES REPORT VIEW
+             ========================================================= -->
+        <section class="view-section hidden" id="view-reports">
+          
+          <div class="section-top-bar">
+            <div>
+              <h2 class="section-title">Sales & Financial Report</h2>
+              <p class="section-subtitle">Revenues and statistics computed exclusively from completed, paid orders.</p>
+            </div>
+            <div class="device-local-tag">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              Device-Local Records Only
+            </div>
+          </div>
+
+          <!-- 4 Sales KPIs -->
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon-wrap stat-icon-gold">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Total Revenue</span>
+                <span class="stat-value text-price" id="report-total-revenue">₹0.00</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrap stat-icon-emerald">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Completed Orders</span>
+                <span class="stat-value text-success" id="report-completed-count">0</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrap stat-icon-blue">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Avg Order Value</span>
+                <span class="stat-value" id="report-avg-order-value">₹0.00</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon-wrap stat-icon-green">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg>
+              </div>
+              <div class="stat-body">
+                <span class="stat-label">Volume Sold</span>
+                <span class="stat-value" id="report-total-volume">0 units</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart & Category Breakdown Split -->
+          <div class="dashboard-split-grid mt-4">
+            
+            <!-- Native SVG Daily Sales Trend Chart -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <div>
+                  <h3 class="panel-title">Daily Sales Trend (Last 7 Days)</h3>
+                  <span class="panel-subtitle">Native offline SVG chart rendered from local completed orders</span>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div id="report-chart-container">
+                  <div class="loading-placeholder">Drawing chart...</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Category Revenue Breakdown -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <div>
+                  <h3 class="panel-title">Sales by Produce Category</h3>
+                  <span class="panel-subtitle">Revenue contribution per category</span>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div id="report-category-bars" class="space-y-3">
+                  <div class="loading-placeholder">Computing categories...</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Best Selling Products Table -->
+          <div class="panel-card mt-4">
+            <div class="panel-header">
+              <div>
+                <h3 class="panel-title">Best-Selling Produce Ranking</h3>
+                <span class="panel-subtitle">Ranked by total sales revenue from completed orders</span>
+              </div>
+            </div>
+            <div class="panel-body p-0">
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 60px;">Rank</th>
+                      <th>Product Name</th>
+                      <th class="text-right">Volume Sold</th>
+                      <th class="text-right">Orders Count</th>
+                      <th class="text-right">Total Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody id="report-top-products-tbody">
+                    <tr><td colspan="5" class="text-center py-4">Loading ranking...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- =========================================================
+             6. SETTINGS VIEW
+             ========================================================= -->
+        <section class="view-section hidden" id="view-settings">
+          
+          <div class="section-top-bar">
+            <div>
+              <h2 class="section-title">Settings</h2>
+              <p class="section-subtitle">Manage your farm profile, preferences, and application data.</p>
+            </div>
+          </div>
+
+          <div class="settings-container">
+            
+            <!-- 1. Farm Profile Card -->
+            <div class="settings-card panel-card">
+              <div class="panel-header">
+                <div class="d-flex align-center gap-3">
+                  <div class="settings-icon-wrap" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </div>
+                  <div>
+                    <h3 class="panel-title">Farm Profile</h3>
+                    <p class="panel-subtitle">Your farm details and primary contact information</p>
+                  </div>
+                </div>
+                <div>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-edit-profile">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                    Edit Profile
+                  </button>
+                  <div id="profile-edit-controls" class="d-flex gap-2 hidden">
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-profile">Cancel</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn-save-profile">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-body">
+                <form id="settings-profile-form" class="settings-form-grid" novalidate onsubmit="return false;">
+                  <div class="form-group">
+                    <label for="setting-farm-name">Farm Name <span class="text-danger">*</span></label>
+                    <input type="text" id="setting-farm-name" class="input-control" required disabled placeholder="e.g. Thennam Thoppu Natural Farm">
+                  </div>
+                  <div class="form-group">
+                    <label for="setting-farmer-name">Farmer Name <span class="text-danger">*</span></label>
+                    <input type="text" id="setting-farmer-name" class="input-control" required disabled placeholder="e.g. Murugan Palanisamy">
+                  </div>
+                  <div class="form-group">
+                    <label for="setting-mobile-number">Mobile Number <span class="text-danger">*</span></label>
+                    <input type="tel" id="setting-mobile-number" class="input-control" required disabled placeholder="e.g. 9442188990">
+                    <span class="text-xs text-muted" id="mobile-hint">10-digit mobile number</span>
+                  </div>
+                  <div class="form-group">
+                    <label for="setting-preferred-language">Preferred Language</label>
+                    <select id="setting-preferred-language" class="input-control" disabled>
+                      <option value="English">English</option>
+                      <option value="Tamil">தமிழ் (Tamil)</option>
+                    </select>
+                  </div>
+                  <div class="form-group form-col-full">
+                    <label for="setting-farm-address">Farm Address</label>
+                    <input type="text" id="setting-farm-address" class="input-control" disabled placeholder="e.g. SF No. 142/2, Main Road">
+                  </div>
+                  <div class="form-group">
+                    <label for="setting-village">Village / Town</label>
+                    <input type="text" id="setting-village" class="input-control" disabled placeholder="e.g. Pollachi">
+                  </div>
+                  <div class="form-group">
+                    <label for="setting-district">District</label>
+                    <input type="text" id="setting-district" class="input-control" disabled placeholder="e.g. Coimbatore">
+                  </div>
+                  <div class="form-group">
+                    <label for="setting-state">State</label>
+                    <input type="text" id="setting-state" class="input-control" disabled placeholder="e.g. Tamil Nadu">
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- 2. Preferences Card -->
+            <div class="settings-card panel-card">
+              <div class="panel-header">
+                <div class="d-flex align-center gap-3">
+                  <div class="settings-icon-wrap" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+                  </div>
+                  <div>
+                    <h3 class="panel-title">Preferences</h3>
+                    <p class="panel-subtitle">Regional, display, and deletion behavior</p>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="settings-rows-list">
+                  
+                  <!-- Language -->
+                  <div class="settings-row">
+                    <div class="settings-row-info">
+                      <div class="settings-row-label">Language</div>
+                      <div class="settings-row-desc">Application interface language</div>
+                    </div>
+                    <div class="settings-row-control">
+                      <select id="pref-language" class="input-control pref-select">
+                        <option value="English">English</option>
+                        <option value="Tamil">தமிழ் (Tamil)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Date Format -->
+                  <div class="settings-row">
+                    <div class="settings-row-info">
+                      <div class="settings-row-label">Date Format</div>
+                      <div class="settings-row-desc">How dates appear across orders, harvests, and logs</div>
+                    </div>
+                    <div class="settings-row-control">
+                      <select id="pref-date-format" class="input-control pref-select">
+                        <option value="DD/MM/YYYY">DD/MM/YYYY (e.g. 12/10/2026)</option>
+                        <option value="MM/DD/YYYY">MM/DD/YYYY (e.g. 10/12/2026)</option>
+                        <option value="YYYY-MM-DD">YYYY-MM-DD (e.g. 2026-10-12)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Currency -->
+                  <div class="settings-row">
+                    <div class="settings-row-info">
+                      <div class="settings-row-label">Currency</div>
+                      <div class="settings-row-desc">Standard currency symbol for price calculations</div>
+                    </div>
+                    <div class="settings-row-control">
+                      <span class="settings-badge-static">Indian Rupee (₹)</span>
+                    </div>
+                  </div>
+
+                  <!-- Low Stock Warning -->
+                  <div class="settings-row">
+                    <div class="settings-row-info">
+                      <div class="settings-row-label">Low Stock Warning</div>
+                      <div class="settings-row-desc">Display low-stock notices when product quantity hits threshold</div>
+                    </div>
+                    <div class="settings-row-control d-flex align-center gap-2">
+                      <span id="label-pref-low-stock" class="text-xs font-semibold">On</span>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="pref-low-stock" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Confirmation Before Delete -->
+                  <div class="settings-row">
+                    <div class="settings-row-info">
+                      <div class="settings-row-label">Confirmation Before Delete</div>
+                      <div class="settings-row-desc">Show confirmation dialog before removing products from catalogue</div>
+                    </div>
+                    <div class="settings-row-control d-flex align-center gap-2">
+                      <span id="label-pref-confirm-delete" class="text-xs font-semibold">On</span>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="pref-confirm-delete" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Notifications Card -->
+            <div class="settings-card panel-card">
+              <div class="panel-header">
+                <div class="d-flex align-center gap-3">
+                  <div class="settings-icon-wrap" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  </div>
+                  <div>
+                    <h3 class="panel-title">Notifications</h3>
+                    <p class="panel-subtitle">Manage in-app alert prompts and status notices</p>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="settings-rows-list">
+
+                  <!-- Low Stock Alerts -->
+                  <div class="settings-row">
+                    <div class="settings-row-info">
+                      <div class="settings-row-label">Low Stock Alerts</div>
+                      <div class="settings-row-desc">Alert when product stock drops below minimum threshold</div>
+                    </div>
+                    <div class="settings-row-control d-flex align-center gap-2">
+                      <span id="label-notif-low-stock" class="text-xs font-semibold">On</span>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="notif-low-stock" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- New Order Alerts -->
+                  <div class="settings-row">
+                    <div class="settings-row-info">
+                      <div class="settings-row-label">New Order Alerts</div>
+                      <div class="settings-row-desc">Alert when new incoming orders arrive</div>
+                    </div>
+                    <div class="settings-row-control d-flex align-center gap-2">
+                      <span id="label-notif-new-orders" class="text-xs font-semibold">On</span>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="notif-new-orders" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Order Status Alerts -->
+                  <div class="settings-row">
+                    <div class="settings-row-info">
+                      <div class="settings-row-label">Order Status Alerts</div>
+                      <div class="settings-row-desc">Notify when order status changes (Accepted, Packed, Completed)</div>
+                    </div>
+                    <div class="settings-row-control d-flex align-center gap-2">
+                      <span id="label-notif-order-status" class="text-xs font-semibold">On</span>
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="notif-order-status" checked>
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Data & Storage Card -->
+            <div class="settings-card panel-card">
+              <div class="panel-header">
+                <div class="d-flex align-center gap-3">
+                  <div class="settings-icon-wrap" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                  </div>
+                  <div>
+                    <h3 class="panel-title">Data & Storage</h3>
+                    <p class="panel-subtitle">Local device storage status, backups, and sample data</p>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-body">
+                <!-- Storage Metrics -->
+                <div class="storage-metrics-grid mb-4">
+                  <div class="storage-metric-box">
+                    <div class="metric-label">Storage Status</div>
+                    <div class="metric-value text-success" id="storage-status-val">
+                      <span class="metric-dot-success"></span> Available
+                    </div>
+                  </div>
+                  <div class="storage-metric-box">
+                    <div class="metric-label">Stored Products</div>
+                    <div class="metric-value" id="storage-products-count">--</div>
+                  </div>
+                  <div class="storage-metric-box">
+                    <div class="metric-label">Stored Orders</div>
+                    <div class="metric-value" id="storage-orders-count">--</div>
+                  </div>
+                  <div class="storage-metric-box">
+                    <div class="metric-label">Last Local Backup</div>
+                    <div class="metric-value text-sm" id="storage-last-backup">No backup yet</div>
+                  </div>
+                </div>
+
+                <!-- Backup & Clear Actions -->
+                <div class="d-flex gap-2 flex-wrap align-center pt-2 border-top">
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-export-backup">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Export Backup
+                  </button>
+
+                  <label class="btn btn-secondary btn-sm cursor-pointer" for="backup-file-input">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Import Backup
+                  </label>
+                  <input type="file" id="backup-file-input" accept=".json" class="hidden">
+
+                  <button type="button" class="btn btn-outline-danger btn-sm" id="btn-clear-demo-data">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                    Clear Demo Data
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Offline Status Card -->
+            <div class="settings-card panel-card">
+              <div class="panel-header">
+                <div class="d-flex align-center gap-3">
+                  <div class="settings-icon-wrap" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+                  </div>
+                  <div>
+                    <h3 class="panel-title">Offline Status</h3>
+                    <p class="panel-subtitle">Device connectivity and local operation</p>
+                  </div>
+                </div>
+                <div id="settings-offline-pill" class="status-pill status-online">
+                  <span class="status-indicator-dot"></span>
+                  <span id="settings-offline-text">Online</span>
+                </div>
+              </div>
+              <div class="panel-body space-y-3">
+                <p class="text-sm text-muted">
+                  Your products, orders, and settings are stored locally on this device and remain available offline.
+                </p>
+                <div class="d-flex align-center justify-between flex-wrap gap-2 pt-2 border-top">
+                  <div class="text-xs text-muted" id="settings-sync-status-text">All local changes are safely saved on this device.</div>
+                  <button type="button" class="btn btn-primary btn-sm" id="btn-settings-sync">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    Sync Now
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. About the App Card -->
+            <div class="settings-card panel-card">
+              <div class="panel-header">
+                <div class="d-flex align-center gap-3">
+                  <div class="settings-icon-wrap" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  </div>
+                  <div>
+                    <h3 class="panel-title">About the App</h3>
+                    <p class="panel-subtitle">Application release details and preference reset</p>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="d-flex justify-between align-center flex-wrap gap-3">
+                  <div>
+                    <div class="font-bold text-base text-forest">FarmDirect Farmer</div>
+                    <div class="text-xs text-muted">Version 1.0.0 &bull; Offline-first farm management application</div>
+                  </div>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-preferences">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    Reset Application Settings
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+      </main>
+      
+      <!-- MOBILE BOTTOM NAVIGATION -->
+      <nav class="mobile-bottom-nav">
+        <a href="#dashboard" class="mobile-nav-link nav-active" data-view-target="dashboard">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <span>Home</span>
+        </a>
+        <a href="#products" class="mobile-nav-link" data-view-target="products">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg>
+          <span>Products</span>
+        </a>
+        <a href="#orders" class="mobile-nav-link" data-view-target="orders">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+          <span>Orders</span>
+        </a>
+        <a href="#inventory" class="mobile-nav-link" data-view-target="inventory">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M12 12v10"/></svg>
+          <span>Stock</span>
+        </a>
+        <a href="#reports" class="mobile-nav-link" data-view-target="reports">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>Sales</span>
+        </a>
+      </nav>
+
+    </div>
+  </div>
+
+  <!-- =========================================================
+       MODALS
+       ========================================================= -->
+
+  <!-- 1. ADD / EDIT PRODUCT MODAL -->
+  <div class="modal-backdrop hidden" id="product-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="product-modal-title">Add New Product</h3>
+        <button class="modal-close-btn" onclick="ProductsModule.closeModal()">&times;</button>
+      </div>
+      <form id="product-form">
+        <input type="hidden" id="product-id-hidden">
+        <input type="hidden" id="product-image-data">
+
+        <div class="modal-body space-y-4">
+          <div class="form-group">
+            <label for="product-name-input">Product Name <span class="text-danger">*</span></label>
+            <input type="text" id="product-name-input" required placeholder="e.g. Country Tomatoes (நாட்டு தக்காளி)" class="input-control">
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="product-category-input">Category <span class="text-danger">*</span></label>
+              <select id="product-category-input" required class="input-control">
+                <option value="Vegetables">Vegetables</option>
+                <option value="Fruits">Fruits</option>
+                <option value="Tubers">Tubers</option>
+                <option value="Greens">Greens</option>
+                <option value="Grains">Grains</option>
+                <option value="Dairy">Dairy</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="product-unit-input">Unit of Measure <span class="text-danger">*</span></label>
+              <select id="product-unit-input" required class="input-control">
+                <option value="kg">kg (Kilogram)</option>
+                <option value="gram">gram</option>
+                <option value="litre">litre</option>
+                <option value="bunch">bunch (கட்டு)</option>
+                <option value="dozen">dozen</option>
+                <option value="piece">piece (எண்ணிக்கை)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row-3">
+            <div class="form-group">
+              <label for="product-price-input">Price (₹) <span class="text-danger">*</span></label>
+              <input type="number" id="product-price-input" required min="0" step="0.5" placeholder="30.00" class="input-control">
+            </div>
+            <div class="form-group">
+              <label for="product-qty-input">Harvest Stock <span class="text-danger">*</span></label>
+              <input type="number" id="product-qty-input" required min="0" step="1" placeholder="50" class="input-control">
+            </div>
+            <div class="form-group">
+              <label for="product-min-threshold-input">Low Alert At</label>
+              <input type="number" id="product-min-threshold-input" min="0" step="1" value="10" placeholder="10" class="input-control">
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="product-harvest-date-input">Harvest Date</label>
+              <input type="date" id="product-harvest-date-input" class="input-control">
+            </div>
+            <div class="form-group d-flex align-center gap-2 pt-4">
+              <label class="toggle-switch">
+                <input type="checkbox" id="product-available-toggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="text-sm font-medium">Available for Sale</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="product-image-file">Local Product Photo (Optional)</label>
+            <input type="file" id="product-image-file" accept="image/*" class="input-control-file">
+            <div id="product-image-preview-wrap" class="mt-2 hidden d-flex align-center gap-3">
+              <img id="product-image-preview" src="" alt="Crop Preview" class="img-preview-thumb">
+              <button type="button" class="btn btn-secondary btn-xs" id="btn-remove-image">Remove Photo</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="product-notes-input">Harvest Notes / Farming Methods</label>
+            <textarea id="product-notes-input" rows="2" placeholder="e.g. Organic compost fed, harvested this morning, zero chemicals." class="input-control"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="ProductsModule.closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-product">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. ORDER DETAILS MODAL -->
+  <div class="modal-backdrop hidden" id="order-details-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Order Details: <span id="modal-order-id"></span></h3>
+          <span class="badge-demo-tag" id="modal-order-demo-tag">DEMO ORDER</span>
+        </div>
+        <button class="modal-close-btn" onclick="OrdersModule.closeDetailsModal()">&times;</button>
+      </div>
+      <div class="modal-body space-y-4">
+        
+        <div class="order-detail-header-card">
+          <div class="d-flex justify-between align-center">
+            <span class="text-xs text-muted" id="modal-order-date"></span>
+            <span class="status-badge" id="modal-order-status"></span>
+          </div>
+          <div class="mt-2">
+            <div class="font-bold text-base" id="modal-customer-name"></div>
+            <div class="text-xs text-muted" id="modal-customer-phone"></div>
+            <div class="text-xs text-muted" id="modal-customer-address"></div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-sm mb-2">Produce Breakdown:</h4>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th class="text-right">Qty</th>
+                  <th class="text-right">Price</th>
+                  <th class="text-right">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody id="modal-order-items-tbody"></tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="3" class="text-right">Total Order Value:</th>
+                  <th class="text-right text-price text-base" id="modal-order-total-amount">₹0.00</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-sm mb-1">Customer Delivery Notes:</h4>
+          <p class="text-xs text-muted p-2 rounded bg-warm border" id="modal-order-notes"></p>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="OrdersModule.closeDetailsModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. CREATE DEMO ORDER MODAL -->
+  <div class="modal-backdrop hidden" id="demo-order-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Create Local Demo Order</h3>
+          <span class="text-xs text-muted">Generates a local customer order to test stock reservation and order completion</span>
+        </div>
+        <button class="modal-close-btn" onclick="OrdersModule.closeDemoOrderModal()">&times;</button>
+      </div>
+      <form id="demo-order-form">
+        <div class="modal-body space-y-4">
+          
+          <div class="alert-banner alert-banner-amber">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <div class="text-xs">
+              <strong>Offline Simulation Notice:</strong> This demo order is created locally on this device. Disconnected devices will not see this until synchronized.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="demo-order-product-select">Select Produce Item <span class="text-danger">*</span></label>
+            <select id="demo-order-product-select" class="input-control" required></select>
+          </div>
+
+          <div class="form-group">
+            <label for="demo-order-qty-input">Order Quantity <span class="text-danger">*</span></label>
+            <input type="number" id="demo-order-qty-input" min="1" step="1" value="2" required class="input-control">
+          </div>
+
+          <div class="d-flex justify-between align-center p-2 rounded bg-warm border">
+            <span class="text-xs font-medium">Estimated Order Amount:</span>
+            <span class="font-bold text-price" id="demo-order-subtotal-display">₹0.00</span>
+          </div>
+
+          <div class="form-group">
+            <label for="demo-order-customer-name">Simulated Customer Name</label>
+            <input type="text" id="demo-order-customer-name" value="Kavitha Sundaram (Household)" class="input-control">
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="demo-order-customer-phone">Customer Phone</label>
+              <input type="text" id="demo-order-customer-phone" value="+91 98421 54321" class="input-control">
+            </div>
+            <div class="form-group">
+              <label for="demo-order-customer-address">Delivery Address</label>
+              <input type="text" id="demo-order-customer-address" value="Mahalingapuram, Pollachi" class="input-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="demo-order-notes">Customer Notes (Optional)</label>
+            <input type="text" id="demo-order-notes" value="Test direct farm gate delivery" class="input-control">
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="OrdersModule.closeDemoOrderModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="demo-order-btn-submit">Place Demo Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. ADJUST STOCK MODAL -->
+  <div class="modal-backdrop hidden" id="stock-adjust-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Adjust Field Stock</h3>
+          <span class="text-xs text-muted" id="adjust-product-name"></span>
+        </div>
+        <button class="modal-close-btn" onclick="InventoryModule.closeAdjustModal()">&times;</button>
+      </div>
+      <form id="stock-adjust-form">
+        <input type="hidden" id="adjust-product-id">
+
+        <div class="modal-body space-y-4">
+          <div class="d-flex justify-between align-center p-3 rounded bg-warm border">
+            <span class="text-sm font-medium">Current Stock Level:</span>
+            <span class="font-bold text-base" id="adjust-current-stock">0 kg</span>
+          </div>
+
+          <div class="form-group">
+            <label class="mb-2 d-block">Adjustment Type <span class="text-danger">*</span></label>
+            <div class="d-flex gap-4">
+              <label class="radio-label">
+                <input type="radio" name="adjust-type" value="add" id="adjust-type-add" checked>
+                <span>Add Stock (Harvest intake)</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="adjust-type" value="deduct" id="adjust-type-deduct">
+                <span>Deduct Stock (Spoilage/Sale)</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="adjust-type" value="set" id="adjust-type-set">
+                <span>Set Exact Stock</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="adjust-amount-input">Quantity (<span id="adjust-product-unit">units</span>) <span class="text-danger">*</span></label>
+              <input type="number" id="adjust-amount-input" required min="0.1" step="0.5" placeholder="e.g. 25" class="input-control">
+            </div>
+            <div class="form-group">
+              <label for="adjust-min-threshold">Low Alert Threshold</label>
+              <input type="number" id="adjust-min-threshold" min="0" step="1" class="input-control">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="adjust-reason-input">Reason for Adjustment</label>
+            <input type="text" id="adjust-reason-input" class="input-control" placeholder="e.g. Fresh harvest from Block B, damaged in transit, etc.">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="InventoryModule.closeAdjustModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Inventory</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. REUSABLE CONFIRMATION MODAL -->
+  <div class="modal-backdrop hidden" id="generic-confirm-modal">
+    <div class="modal-dialog modal-dialog-sm">
+      <div class="modal-header">
+        <h3 class="modal-title" id="confirm-modal-title">Confirm Action</h3>
+      </div>
+      <div class="modal-body">
+        <p class="text-sm" id="confirm-modal-message">Are you sure you want to proceed?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="confirm-modal-cancel-btn">Cancel</button>
+        <button type="button" class="btn btn-primary" id="confirm-modal-action-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- APPLICATION SCRIPTS (Vanilla JS, Zero Bundlers/CDNs) -->
+  <script src="./db.js"></script>
+  <script src="./products.js"></script>
+  <script src="./orders.js"></script>
+  <script src="./inventory.js"></script>
+  <script src="./reports.js"></script>
+  <script src="./sync.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
