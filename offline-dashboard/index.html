@@ -14,10 +14,199 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="icon" type="image/svg+xml" href="./icons/icon.svg">
   
+  <!-- Leaflet CSS for offline farm map -->
+  <link rel="stylesheet" href="./leaflet.css">
+  
   <!-- Pure Vanilla CSS - Zero external CDNs or online fonts -->
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+  <!-- =========================================================
+       FARMER LOGIN GATE (Authentication Barrier)
+       Enforces login system before viewing farmer profile & dashboard
+       ========================================================= -->
+  <div class="farmer-login-gate" id="farmer-login-gate">
+    <div class="gate-overlay"></div>
+    
+    <div class="gate-wrapper-luxury">
+      <!-- LEFT COLUMN: AGRICULTURAL SHOWCASE & TRUST HERO -->
+      <div class="gate-hero-panel">
+        <div class="gate-hero-content">
+          <!-- Brand Badge -->
+          <div class="gate-hero-brand">
+            <div class="gate-hero-logo">
+              <img src="./icons/logo.png" alt="FarmDirect Logo" class="gate-hero-logo-img">
+            </div>
+            <div>
+              <div class="gate-hero-brand-name">FarmDirect <span class="gate-hero-pro-badge">PRO</span></div>
+              <div class="gate-hero-brand-sub">Tamil Nadu Direct-Trade Agriculture</div>
+            </div>
+          </div>
+
+          <!-- Hero Main Pitch -->
+          <div class="gate-hero-pitch">
+            <div class="gate-hero-tag">
+              <span class="gate-pulse-dot"></span>
+              <span>1,400+ Verified Tamil Nadu Farmers</span>
+            </div>
+            <h1 class="gate-hero-title">Direct Field-to-Market Trade. Zero Intermediaries.</h1>
+            <p class="gate-hero-description">
+              Connect your harvest directly to thousands of urban households across Coimbatore, Pollachi &amp; Chennai. Built with real-time APMC mandi benchmark pricing and 100% offline sync resilience.
+            </p>
+          </div>
+
+          <!-- Key Impact Metrics Trio -->
+          <div class="gate-hero-metrics">
+            <div class="gate-metric-card">
+              <div class="gate-metric-val">₹0</div>
+              <div class="gate-metric-label">Middleman Cut</div>
+              <div class="gate-metric-note">100% to Farmer</div>
+            </div>
+            <div class="gate-metric-card">
+              <div class="gate-metric-val">100%</div>
+              <div class="gate-metric-label">Offline-Ready</div>
+              <div class="gate-metric-note">Syncs anywhere</div>
+            </div>
+            <div class="gate-metric-card">
+              <div class="gate-metric-val">2-Hr</div>
+              <div class="gate-metric-label">UPI Settlement</div>
+              <div class="gate-metric-note">Direct Bank Pay</div>
+            </div>
+          </div>
+
+          <!-- Verified Grower Testimonial Quote -->
+          <div class="gate-farmer-quote-card">
+            <div class="gate-quote-icon">“</div>
+            <p class="gate-quote-text">
+              FarmDirect enabled our coconut grove to sell tender coconuts and shallots directly to Coimbatore families with zero APMC market fee cuts.
+            </p>
+            <div class="gate-quote-author">
+              <div class="gate-quote-avatar">🥥</div>
+              <div>
+                <div class="gate-quote-name">Murugan Palanisamy <span class="gate-verified-tick">✓</span></div>
+                <div class="gate-quote-location">Pollachi Coconut Producer &bull; Aliyar Organic Belt</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security Badge -->
+          <div class="gate-security-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span>Verified Google Identity Services &bull; Supabase Auth 256-Bit SSL</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: LOGIN SYSTEM (Google Authentication Hub) -->
+      <div class="gate-login-panel">
+        <div class="gate-card" id="gate-view-login">
+          <div class="gate-card-header">
+            <div class="gate-access-pill">
+              <span class="gate-leaf-icon">🌿</span>
+              <span>Official Farmer Portal &bull; v2.6</span>
+            </div>
+            <h2 class="gate-card-title">Farmer Sign In</h2>
+            <p class="gate-card-desc">Sign in with your Google account to access your field harvest batches, stock inventory, and consumer orders.</p>
+          </div>
+
+          <div class="gate-card-body">
+            <!-- Primary Official Google Sign-In Button -->
+            <button type="button" class="btn-google-sign-in-luxury" id="btn-gate-google-signin" onclick="App.handleGoogleFarmerAuth()">
+              <div class="google-logo-wrapper">
+                <svg class="google-svg-icon" width="22" height="22" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+              </div>
+              <div class="google-btn-text-group">
+                <span class="google-btn-title" id="gate-google-btn-text">Sign in with Google</span>
+                <span class="google-btn-sub">Google Identity Services</span>
+              </div>
+              <span class="google-btn-arrow">→</span>
+            </button>
+
+            <div class="gate-divider">
+              <span>Or Choose Verified Grower Profile</span>
+            </div>
+
+            <!-- Instant 1-Click Verified Farmer Google Profiles -->
+            <div class="gate-farmer-list">
+              <button type="button" class="gate-farmer-card" onclick="App.loginAsFarmerProfile('sanjai')">
+                <div class="gate-farmer-card-left">
+                  <div class="gate-farmer-avatar-box">👨‍🌾</div>
+                  <div>
+                    <div class="gate-farmer-name">
+                      Sanjai Karthik
+                      <span class="gate-tag-pill active">Active Session</span>
+                    </div>
+                    <div class="gate-farmer-farm"><span>🌾</span> sanjaivish18@gmail.com &bull; Pollachi Rural</div>
+                  </div>
+                </div>
+                <div class="gate-farmer-arrow">→</div>
+              </button>
+
+              <button type="button" class="gate-farmer-card" onclick="App.loginAsFarmerProfile('murugan')">
+                <div class="gate-farmer-card-left">
+                  <div class="gate-farmer-avatar-box">🥥</div>
+                  <div>
+                    <div class="gate-farmer-name">
+                      Murugan Palanisamy
+                      <span class="gate-tag-pill verified">Verified Grower</span>
+                    </div>
+                    <div class="gate-farmer-farm"><span>🌴</span> murugan.pollachi@demo.farmbridge.in &bull; Aliyar</div>
+                  </div>
+                </div>
+                <div class="gate-farmer-arrow">→</div>
+              </button>
+            </div>
+
+            <!-- Custom Google Email Toggle Accordion -->
+            <div class="gate-custom-google-wrapper">
+              <button type="button" class="gate-custom-toggle-btn" onclick="App.toggleGateCustomGoogle()">
+                <span>Use another Google account</span>
+                <span id="gate-custom-toggle-icon">＋</span>
+              </button>
+              <div class="gate-custom-google-box hidden" id="gate-custom-google-box">
+                <div class="gate-custom-input-row">
+                  <input type="email" id="gate-custom-google-input" class="gate-custom-input" placeholder="farmer@gmail.com" />
+                  <button type="button" class="gate-custom-submit-btn" onclick="App.submitGateCustomGoogle()">Sign In</button>
+                </div>
+                <p class="gate-custom-hint">Enter your registered Google Mail account to access your farm dashboard.</p>
+              </div>
+            </div>
+
+            <!-- Feature Trust Chips -->
+            <div class="gate-feature-chips">
+              <div class="gate-chip">
+                <span class="gate-chip-icon">⚡</span>
+                <span>100% Offline-Ready</span>
+              </div>
+              <div class="gate-chip">
+                <span class="gate-chip-icon">📦</span>
+                <span>Zero Middlemen</span>
+              </div>
+              <div class="gate-chip">
+                <span class="gate-chip-icon">🔄</span>
+                <span>Cloud Auto-Sync</span>
+              </div>
+            </div>
+
+            <div class="gate-card-footer-notice">
+              🔒 End-to-end encrypted farmer data &bull; IndexedDB local persistence &bull; ISO-standard security
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="app-container">
     
     <!-- DESKTOP SIDEBAR -->
@@ -27,48 +216,56 @@
           <img src="./icons/logo.png" alt="FarmDirect App Logo" class="brand-logo-img">
         </div>
         <div class="brand-info">
-          <span class="brand-title">FarmDirect</span>
-          <span class="brand-subtitle">Farmer Portal</span>
+          <span class="brand-title" data-i18n="app_brand">FarmDirect</span>
+          <span class="brand-subtitle" data-i18n="app_portal">Farmer Portal</span>
         </div>
       </div>
 
       <nav class="sidebar-nav">
         <a href="#dashboard" class="nav-item nav-active" data-view-target="dashboard">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-          <span>Dashboard</span>
+          <span data-i18n="nav_dashboard">Dashboard</span>
         </a>
 
         <a href="#products" class="nav-item" data-view-target="products">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
-          <span>My Products</span>
+          <span data-i18n="nav_products">My Products</span>
         </a>
 
         <a href="#orders" class="nav-item" data-view-target="orders">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-          <span>Farmer Orders</span>
+          <span data-i18n="nav_orders">Farmer Orders</span>
         </a>
 
         <a href="#inventory" class="nav-item" data-view-target="inventory">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M12 12v10"/></svg>
-          <span>Inventory</span>
+          <span data-i18n="nav_inventory">Inventory</span>
         </a>
 
         <a href="#reports" class="nav-item" data-view-target="reports">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          <span>Sales Report</span>
+          <span data-i18n="nav_reports">Sales Report</span>
         </a>
 
         <a href="#settings" class="nav-item" data-view-target="settings">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-          <span>Settings</span>
+          <span data-i18n="nav_settings">Settings</span>
         </a>
       </nav>
 
       <div class="sidebar-footer">
         <div class="farm-badge-card">
-          <div class="farm-badge-label">Active Farm</div>
+          <div class="farm-badge-label" data-i18n="active_farm">Active Farm</div>
           <div class="farm-badge-name" id="sidebar-farm-name">Thennam Thoppu Natural Farm</div>
           <div class="farm-badge-loc">Aliyar Road, Pollachi</div>
+          <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(229, 233, 225, 0.6); display: flex; flex-direction: column; gap: 6px;">
+            <button type="button" class="btn btn-secondary btn-xs" onclick="App.openFarmerAuthModal()" style="justify-content: center; font-size: 11px; width: 100%;">
+              <span>🌾 Edit Farm Profile</span>
+            </button>
+            <button type="button" class="btn btn-outline btn-xs" onclick="App.signOut()" style="justify-content: center; font-size: 11px; width: 100%; color: #dc2626; border-color: rgba(220, 38, 38, 0.3);">
+              <span>🚪 Sign Out</span>
+            </button>
+          </div>
         </div>
       </div>
     </aside>
@@ -93,25 +290,31 @@
           <!-- Offline / Online Indicator Pill -->
           <div class="status-pill status-online" id="connectivity-status-pill">
             <span class="status-indicator-dot"></span>
-            <span id="connectivity-status-text">Internet Connected</span>
+            <span id="connectivity-status-text" data-i18n="status_online">Internet Connected</span>
           </div>
+
+          <!-- Farmer Account / Google Login & Farm Setup -->
+          <button class="btn btn-secondary btn-sm" id="btn-farmer-auth-modal" onclick="App.openFarmerAuthModal()" title="Google Login & Farm Setup">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span class="hide-mobile" id="header-farmer-name-btn">Farmer Profile</span>
+          </button>
 
           <!-- Cloud Auto-Sync Button -->
           <button class="btn btn-secondary btn-sm btn-sync-trigger" id="header-sync-btn" title="Cloud Synchronization & Auto-Sync Engine">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-            <span class="hide-mobile">Sync</span>
+            <span class="hide-mobile" data-i18n="btn_sync">Sync</span>
           </button>
 
           <!-- PWA Install Button -->
           <button class="btn btn-success btn-sm hidden" id="btn-install-pwa" title="Install App to Home Screen / Desktop">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            <span>Install App</span>
+            <span data-i18n="btn_install">Install App</span>
           </button>
 
           <!-- Quick Add Product Button -->
           <button class="btn btn-primary btn-sm" onclick="ProductsModule.openAddProductModal()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-            <span>Add Product</span>
+            <span data-i18n="btn_add_product">Add Product</span>
           </button>
         </div>
       </header>
@@ -135,16 +338,16 @@
           <!-- Welcome Hero Banner -->
           <div class="welcome-hero-banner">
             <div class="welcome-content">
-              <h2>Welcome back, Farmer!</h2>
-              <p>Direct Farm-to-Consumer Portal for Pollachi & Coimbatore Region. Manage your field harvest, stock availability, incoming customer orders, and local sales completely offline.</p>
+              <h2 data-i18n="hero_title">Welcome back, Farmer!</h2>
+              <p data-i18n="hero_subtitle">Direct Farm-to-Consumer Portal for Pollachi & Coimbatore Region. Manage your field harvest, stock availability, incoming customer orders, and local sales completely offline.</p>
               <div class="welcome-actions">
                 <button class="btn btn-white" onclick="ProductsModule.openAddProductModal()">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-                  Add New Product
+                  <span data-i18n="hero_add_product">Add New Product</span>
                 </button>
                 <button class="btn btn-glass" onclick="OrdersModule.openDemoOrderModal()">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-                  Create Demo Order
+                  <span data-i18n="hero_create_demo">Create Demo Order</span>
                 </button>
               </div>
             </div>
@@ -164,7 +367,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg>
               </div>
               <div class="stat-body">
-                <span class="stat-label">Total Products</span>
+                <span class="stat-label" data-i18n="stat_total_products">Total Products</span>
                 <span class="stat-value" id="dash-stat-products">0</span>
               </div>
             </div>
@@ -174,7 +377,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M12 12v10"/></svg>
               </div>
               <div class="stat-body">
-                <span class="stat-label">Available Stock</span>
+                <span class="stat-label" data-i18n="stat_available_stock">Available Stock</span>
                 <span class="stat-value" id="dash-stat-stock">0</span>
               </div>
             </div>
@@ -184,7 +387,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
               </div>
               <div class="stat-body">
-                <span class="stat-label">Total Orders</span>
+                <span class="stat-label" data-i18n="stat_total_orders">Total Orders</span>
                 <span class="stat-value" id="dash-stat-orders">0</span>
               </div>
             </div>
@@ -194,7 +397,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               </div>
               <div class="stat-body">
-                <span class="stat-label">Pending Orders</span>
+                <span class="stat-label" data-i18n="stat_pending_orders">Pending Orders</span>
                 <span class="stat-value text-amber" id="dash-stat-pending">0</span>
               </div>
             </div>
@@ -204,7 +407,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               </div>
               <div class="stat-body">
-                <span class="stat-label">Completed Orders</span>
+                <span class="stat-label" data-i18n="stat_completed_orders">Completed Orders</span>
                 <span class="stat-value text-success" id="dash-stat-completed">0</span>
               </div>
             </div>
@@ -214,7 +417,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               </div>
               <div class="stat-body">
-                <span class="stat-label">Completed Sales</span>
+                <span class="stat-label" data-i18n="stat_completed_sales">Completed Sales</span>
                 <span class="stat-value text-price" id="dash-stat-sales">₹0.00</span>
               </div>
             </div>
@@ -228,10 +431,10 @@
             <div class="panel-card">
               <div class="panel-header">
                 <div>
-                  <h3 class="panel-title">Recent Customer Orders</h3>
-                  <span class="panel-subtitle">Latest incoming requests & local demo orders</span>
+                  <h3 class="panel-title" data-i18n="recent_orders_title">Recent Customer Orders</h3>
+                  <span class="panel-subtitle" data-i18n="recent_orders_sub">Latest incoming requests & local demo orders</span>
                 </div>
-                <button class="btn btn-secondary btn-sm" onclick="App.navigateTo('orders')">View All</button>
+                <button class="btn btn-secondary btn-sm" onclick="App.navigateTo('orders')" data-i18n="btn_view_all">View All</button>
               </div>
               <div class="panel-body">
                 <div id="dashboard-recent-orders-list">
@@ -244,10 +447,10 @@
             <div class="panel-card">
               <div class="panel-header">
                 <div>
-                  <h3 class="panel-title">Field Harvest Overview</h3>
-                  <span class="panel-subtitle">Current stock and price levels</span>
+                  <h3 class="panel-title" data-i18n="harvest_overview_title">Field Harvest Overview</h3>
+                  <span class="panel-subtitle" data-i18n="harvest_overview_sub">Current stock and price levels</span>
                 </div>
-                <button class="btn btn-secondary btn-sm" onclick="App.navigateTo('products')">View Catalogue</button>
+                <button class="btn btn-secondary btn-sm" onclick="App.navigateTo('products')" data-i18n="btn_view_catalogue">View Catalogue</button>
               </div>
               <div class="panel-body">
                 <div class="dash-products-grid" id="dashboard-products-overview-grid">
@@ -596,8 +799,8 @@
           
           <div class="section-top-bar">
             <div>
-              <h2 class="section-title">Settings</h2>
-              <p class="section-subtitle">Manage your farm profile, preferences, and application data.</p>
+              <h2 class="section-title" data-i18n="settings_title">Settings</h2>
+              <p class="section-subtitle" data-i18n="settings_subtitle">Manage your farm profile, preferences, and application data.</p>
             </div>
           </div>
 
@@ -611,20 +814,20 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                   </div>
                   <div>
-                    <h3 class="panel-title">Farm Profile</h3>
-                    <p class="panel-subtitle">Your farm details and primary contact information</p>
+                    <h3 class="panel-title" data-i18n="profile_title">Farm Profile</h3>
+                    <p class="panel-subtitle" data-i18n="profile_subtitle">Your farm details and primary contact information</p>
                   </div>
                 </div>
                 <div>
                   <button type="button" class="btn btn-secondary btn-sm" id="btn-edit-profile">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                    Edit Profile
+                    <span data-i18n="btn_edit_profile">Edit Profile</span>
                   </button>
                   <div id="profile-edit-controls" class="d-flex gap-2 hidden">
-                    <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-profile">Cancel</button>
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-profile" data-i18n="btn_cancel">Cancel</button>
                     <button type="button" class="btn btn-primary btn-sm" id="btn-save-profile">
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                      Save Changes
+                      <span data-i18n="btn_save_changes">Save Changes</span>
                     </button>
                   </div>
                 </div>
@@ -632,39 +835,42 @@
               <div class="panel-body">
                 <form id="settings-profile-form" class="settings-form-grid" novalidate onsubmit="return false;">
                   <div class="form-group">
-                    <label for="setting-farm-name">Farm Name <span class="text-danger">*</span></label>
+                    <label for="setting-farm-name"><span data-i18n="label_farm_name">Farm Name</span> <span class="text-danger">*</span></label>
                     <input type="text" id="setting-farm-name" class="input-control" required disabled placeholder="e.g. Thennam Thoppu Natural Farm">
                   </div>
                   <div class="form-group">
-                    <label for="setting-farmer-name">Farmer Name <span class="text-danger">*</span></label>
+                    <label for="setting-farmer-name"><span data-i18n="label_farmer_name">Farmer Name</span> <span class="text-danger">*</span></label>
                     <input type="text" id="setting-farmer-name" class="input-control" required disabled placeholder="e.g. Murugan Palanisamy">
                   </div>
                   <div class="form-group">
-                    <label for="setting-mobile-number">Mobile Number <span class="text-danger">*</span></label>
+                    <label for="setting-mobile-number"><span data-i18n="label_mobile_number">Mobile Number</span> <span class="text-danger">*</span></label>
                     <input type="tel" id="setting-mobile-number" class="input-control" required disabled placeholder="e.g. 9442188990">
-                    <span class="text-xs text-muted" id="mobile-hint">10-digit mobile number</span>
+                    <span class="text-xs text-muted" id="mobile-hint" data-i18n="hint_mobile_number">10-digit mobile number</span>
                   </div>
                   <div class="form-group">
-                    <label for="setting-preferred-language">Preferred Language</label>
+                    <label for="setting-preferred-language" data-i18n="label_preferred_language">Preferred Language</label>
                     <select id="setting-preferred-language" class="input-control" disabled>
                       <option value="English">English</option>
                       <option value="Tamil">தமிழ் (Tamil)</option>
+                      <option value="Hindi">हिंदी (Hindi)</option>
+                      <option value="Malayalam">മലയാളം (Malayalam)</option>
+                      <option value="Telugu">తెలుగు (Telugu)</option>
                     </select>
                   </div>
                   <div class="form-group form-col-full">
-                    <label for="setting-farm-address">Farm Address</label>
+                    <label for="setting-farm-address" data-i18n="label_farm_address">Farm Address</label>
                     <input type="text" id="setting-farm-address" class="input-control" disabled placeholder="e.g. SF No. 142/2, Main Road">
                   </div>
                   <div class="form-group">
-                    <label for="setting-village">Village / Town</label>
+                    <label for="setting-village" data-i18n="label_village">Village / Town</label>
                     <input type="text" id="setting-village" class="input-control" disabled placeholder="e.g. Pollachi">
                   </div>
                   <div class="form-group">
-                    <label for="setting-district">District</label>
+                    <label for="setting-district" data-i18n="label_district">District</label>
                     <input type="text" id="setting-district" class="input-control" disabled placeholder="e.g. Coimbatore">
                   </div>
                   <div class="form-group">
-                    <label for="setting-state">State</label>
+                    <label for="setting-state" data-i18n="label_state">State</label>
                     <input type="text" id="setting-state" class="input-control" disabled placeholder="e.g. Tamil Nadu">
                   </div>
                 </form>
@@ -679,8 +885,8 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
                   </div>
                   <div>
-                    <h3 class="panel-title">Preferences</h3>
-                    <p class="panel-subtitle">Regional, display, and deletion behavior</p>
+                    <h3 class="panel-title" data-i18n="pref_title">Preferences</h3>
+                    <p class="panel-subtitle" data-i18n="pref_subtitle">Regional, display, and deletion behavior</p>
                   </div>
                 </div>
               </div>
@@ -690,13 +896,16 @@
                   <!-- Language -->
                   <div class="settings-row">
                     <div class="settings-row-info">
-                      <div class="settings-row-label">Language</div>
-                      <div class="settings-row-desc">Application interface language</div>
+                      <div class="settings-row-label" data-i18n="label_language">Language</div>
+                      <div class="settings-row-desc" data-i18n="desc_language">Application interface language</div>
                     </div>
                     <div class="settings-row-control">
                       <select id="pref-language" class="input-control pref-select">
                         <option value="English">English</option>
                         <option value="Tamil">தமிழ் (Tamil)</option>
+                        <option value="Hindi">हिंदी (Hindi)</option>
+                        <option value="Malayalam">മലയാളം (Malayalam)</option>
+                        <option value="Telugu">తెలుగు (Telugu)</option>
                       </select>
                     </div>
                   </div>
@@ -704,8 +913,8 @@
                   <!-- Date Format -->
                   <div class="settings-row">
                     <div class="settings-row-info">
-                      <div class="settings-row-label">Date Format</div>
-                      <div class="settings-row-desc">How dates appear across orders, harvests, and logs</div>
+                      <div class="settings-row-label" data-i18n="label_date_format">Date Format</div>
+                      <div class="settings-row-desc" data-i18n="desc_date_format">How dates appear across orders, harvests, and logs</div>
                     </div>
                     <div class="settings-row-control">
                       <select id="pref-date-format" class="input-control pref-select">
@@ -719,19 +928,19 @@
                   <!-- Currency -->
                   <div class="settings-row">
                     <div class="settings-row-info">
-                      <div class="settings-row-label">Currency</div>
-                      <div class="settings-row-desc">Standard currency symbol for price calculations</div>
+                      <div class="settings-row-label" data-i18n="label_currency">Currency</div>
+                      <div class="settings-row-desc" data-i18n="desc_currency">Standard currency symbol for price calculations</div>
                     </div>
                     <div class="settings-row-control">
-                      <span class="settings-badge-static">Indian Rupee (₹)</span>
+                      <span class="settings-badge-static" data-i18n="val_currency">Indian Rupee (₹)</span>
                     </div>
                   </div>
 
                   <!-- Low Stock Warning -->
                   <div class="settings-row">
                     <div class="settings-row-info">
-                      <div class="settings-row-label">Low Stock Warning</div>
-                      <div class="settings-row-desc">Display low-stock notices when product quantity hits threshold</div>
+                      <div class="settings-row-label" data-i18n="label_low_stock_warning">Low Stock Warning</div>
+                      <div class="settings-row-desc" data-i18n="desc_low_stock_warning">Display low-stock notices when product quantity hits threshold</div>
                     </div>
                     <div class="settings-row-control d-flex align-center gap-2">
                       <span id="label-pref-low-stock" class="text-xs font-semibold">On</span>
@@ -745,8 +954,8 @@
                   <!-- Confirmation Before Delete -->
                   <div class="settings-row">
                     <div class="settings-row-info">
-                      <div class="settings-row-label">Confirmation Before Delete</div>
-                      <div class="settings-row-desc">Show confirmation dialog before removing products from catalogue</div>
+                      <div class="settings-row-label" data-i18n="label_confirm_delete">Confirmation Before Delete</div>
+                      <div class="settings-row-desc" data-i18n="desc_confirm_delete">Show confirmation dialog before removing products from catalogue</div>
                     </div>
                     <div class="settings-row-control d-flex align-center gap-2">
                       <span id="label-pref-confirm-delete" class="text-xs font-semibold">On</span>
@@ -769,8 +978,8 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                   </div>
                   <div>
-                    <h3 class="panel-title">Notifications</h3>
-                    <p class="panel-subtitle">Manage in-app alert prompts and status notices</p>
+                    <h3 class="panel-title" data-i18n="notif_title">Notifications</h3>
+                    <p class="panel-subtitle" data-i18n="notif_subtitle">Manage in-app alert prompts and status notices</p>
                   </div>
                 </div>
               </div>
@@ -780,8 +989,8 @@
                   <!-- Low Stock Alerts -->
                   <div class="settings-row">
                     <div class="settings-row-info">
-                      <div class="settings-row-label">Low Stock Alerts</div>
-                      <div class="settings-row-desc">Alert when product stock drops below minimum threshold</div>
+                      <div class="settings-row-label" data-i18n="label_notif_low_stock">Low Stock Alerts</div>
+                      <div class="settings-row-desc" data-i18n="desc_notif_low_stock">Alert when product stock drops below minimum threshold</div>
                     </div>
                     <div class="settings-row-control d-flex align-center gap-2">
                       <span id="label-notif-low-stock" class="text-xs font-semibold">On</span>
@@ -795,8 +1004,8 @@
                   <!-- New Order Alerts -->
                   <div class="settings-row">
                     <div class="settings-row-info">
-                      <div class="settings-row-label">New Order Alerts</div>
-                      <div class="settings-row-desc">Alert when new incoming orders arrive</div>
+                      <div class="settings-row-label" data-i18n="label_notif_new_orders">New Order Alerts</div>
+                      <div class="settings-row-desc" data-i18n="desc_notif_new_orders">Alert when new incoming orders arrive</div>
                     </div>
                     <div class="settings-row-control d-flex align-center gap-2">
                       <span id="label-notif-new-orders" class="text-xs font-semibold">On</span>
@@ -810,8 +1019,8 @@
                   <!-- Order Status Alerts -->
                   <div class="settings-row">
                     <div class="settings-row-info">
-                      <div class="settings-row-label">Order Status Alerts</div>
-                      <div class="settings-row-desc">Notify when order status changes (Accepted, Packed, Completed)</div>
+                      <div class="settings-row-label" data-i18n="label_notif_order_status">Order Status Alerts</div>
+                      <div class="settings-row-desc" data-i18n="desc_notif_order_status">Notify when order status changes (Accepted, Packed, Completed)</div>
                     </div>
                     <div class="settings-row-control d-flex align-center gap-2">
                       <span id="label-notif-order-status" class="text-xs font-semibold">On</span>
@@ -834,8 +1043,8 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
                   </div>
                   <div>
-                    <h3 class="panel-title">Data & Storage</h3>
-                    <p class="panel-subtitle">Local device storage status, backups, and sample data</p>
+                    <h3 class="panel-title" data-i18n="data_storage_title">Data & Storage</h3>
+                    <p class="panel-subtitle" data-i18n="data_storage_subtitle">Local device storage status, backups, and sample data</p>
                   </div>
                 </div>
               </div>
@@ -843,21 +1052,21 @@
                 <!-- Storage Metrics -->
                 <div class="storage-metrics-grid mb-4">
                   <div class="storage-metric-box">
-                    <div class="metric-label">Storage Status</div>
+                    <div class="metric-label" data-i18n="label_storage_status">Storage Status</div>
                     <div class="metric-value text-success" id="storage-status-val">
                       <span class="metric-dot-success"></span> Available
                     </div>
                   </div>
                   <div class="storage-metric-box">
-                    <div class="metric-label">Stored Products</div>
+                    <div class="metric-label" data-i18n="label_stored_products">Stored Products</div>
                     <div class="metric-value" id="storage-products-count">--</div>
                   </div>
                   <div class="storage-metric-box">
-                    <div class="metric-label">Stored Orders</div>
+                    <div class="metric-label" data-i18n="label_stored_orders">Stored Orders</div>
                     <div class="metric-value" id="storage-orders-count">--</div>
                   </div>
                   <div class="storage-metric-box">
-                    <div class="metric-label">Last Local Backup</div>
+                    <div class="metric-label" data-i18n="label_last_backup">Last Local Backup</div>
                     <div class="metric-value text-sm" id="storage-last-backup">No backup yet</div>
                   </div>
                 </div>
@@ -866,18 +1075,18 @@
                 <div class="d-flex gap-2 flex-wrap align-center pt-2 border-top">
                   <button type="button" class="btn btn-secondary btn-sm" id="btn-export-backup">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Export Backup
+                    <span data-i18n="btn_export_backup">Export Backup</span>
                   </button>
 
                   <label class="btn btn-secondary btn-sm cursor-pointer" for="backup-file-input">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    Import Backup
+                    <span data-i18n="btn_import_backup">Import Backup</span>
                   </label>
                   <input type="file" id="backup-file-input" accept=".json" class="hidden">
 
                   <button type="button" class="btn btn-outline-danger btn-sm" id="btn-clear-demo-data">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                    Clear Demo Data
+                    <span data-i18n="btn_clear_demo">Clear Demo Data</span>
                   </button>
                 </div>
               </div>
@@ -891,8 +1100,8 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
                   </div>
                   <div>
-                    <h3 class="panel-title">Offline Status</h3>
-                    <p class="panel-subtitle">Device connectivity and local operation</p>
+                    <h3 class="panel-title" data-i18n="offline_title">Offline Status</h3>
+                    <p class="panel-subtitle" data-i18n="offline_subtitle">Device connectivity and local operation</p>
                   </div>
                 </div>
                 <div id="settings-offline-pill" class="status-pill status-online">
@@ -901,15 +1110,46 @@
                 </div>
               </div>
               <div class="panel-body space-y-3">
-                <p class="text-sm text-muted">
+                <p class="text-sm text-muted" data-i18n="offline_note">
                   Your products, orders, and settings are stored locally on this device and remain available offline.
                 </p>
                 <div class="d-flex align-center justify-between flex-wrap gap-2 pt-2 border-top">
                   <div class="text-xs text-muted" id="settings-sync-status-text">All local changes are safely saved on this device.</div>
                   <button type="button" class="btn btn-primary btn-sm" id="btn-settings-sync">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-                    Sync Now
+                    <span data-i18n="btn_sync_now">Sync Now</span>
                   </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Farmer Account & Session Card -->
+            <div class="settings-card panel-card">
+              <div class="panel-header">
+                <div class="d-flex align-center gap-3">
+                  <div class="settings-icon-wrap" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </div>
+                  <div>
+                    <h3 class="panel-title">Farmer Account &amp; Session</h3>
+                    <p class="panel-subtitle">Manage login state and profile details</p>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="d-flex justify-between align-center flex-wrap gap-3">
+                  <div>
+                    <div class="font-bold text-sm text-forest" id="settings-session-user-name">Active Farmer Session</div>
+                    <div class="text-xs text-muted" id="settings-session-user-email">Logged in via Google Authentication</div>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="App.openFarmerAuthModal()">
+                      <span>🌾 Edit Profile</span>
+                    </button>
+                    <button type="button" class="btn btn-outline btn-sm" style="color:#dc2626; border-color: rgba(220, 38, 38, 0.3);" onclick="App.signOut()">
+                      <span>🚪 Sign Out</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -922,20 +1162,20 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                   </div>
                   <div>
-                    <h3 class="panel-title">About the App</h3>
-                    <p class="panel-subtitle">Application release details and preference reset</p>
+                    <h3 class="panel-title" data-i18n="about_title">About the App</h3>
+                    <p class="panel-subtitle" data-i18n="about_subtitle">Application release details and preference reset</p>
                   </div>
                 </div>
               </div>
               <div class="panel-body">
                 <div class="d-flex justify-between align-center flex-wrap gap-3">
                   <div>
-                    <div class="font-bold text-base text-forest">FarmDirect Farmer</div>
-                    <div class="text-xs text-muted">Version 1.0.0 &bull; Offline-first farm management application</div>
+                    <div class="font-bold text-base text-forest" data-i18n="about_app_name">FarmDirect Farmer</div>
+                    <div class="text-xs text-muted" data-i18n="about_desc">Version 1.0.0 &bull; Offline-first farm management application</div>
                   </div>
                   <button type="button" class="btn btn-secondary btn-sm" id="btn-reset-preferences">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                    Reset Application Settings
+                    <span data-i18n="btn_reset_settings">Reset Application Settings</span>
                   </button>
                 </div>
               </div>
@@ -951,23 +1191,23 @@
       <nav class="mobile-bottom-nav">
         <a href="#dashboard" class="mobile-nav-link nav-active" data-view-target="dashboard">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-          <span>Home</span>
+          <span data-i18n="nav_dashboard">Home</span>
         </a>
         <a href="#products" class="mobile-nav-link" data-view-target="products">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/></svg>
-          <span>Products</span>
+          <span data-i18n="nav_products">Products</span>
         </a>
         <a href="#orders" class="mobile-nav-link" data-view-target="orders">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-          <span>Orders</span>
+          <span data-i18n="nav_orders">Orders</span>
         </a>
         <a href="#inventory" class="mobile-nav-link" data-view-target="inventory">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M12 12v10"/></svg>
-          <span>Stock</span>
+          <span data-i18n="nav_inventory">Stock</span>
         </a>
         <a href="#reports" class="mobile-nav-link" data-view-target="reports">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-          <span>Sales</span>
+          <span data-i18n="nav_reports">Sales</span>
         </a>
       </nav>
 
@@ -1259,6 +1499,492 @@
     </div>
   </div>
 
+  <!-- 6. REDESIGNED 3-STEP FARMER GOOGLE LOGIN & FARM SETUP MODAL -->
+  <div class="modal-backdrop profile-setup-backdrop hidden" id="farmer-auth-modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+    <div class="modal-dialog profile-setup-dialog">
+      
+      <!-- STICKY MODAL HEADER -->
+      <div class="profile-setup-header">
+        <div class="profile-setup-title-box">
+          <h3 class="profile-setup-title" id="profile-modal-title">🌾 Farmer Profile &amp; Setup</h3>
+          <p class="profile-setup-subtitle">Complete your farm profile to start managing your products and orders.</p>
+        </div>
+        <button type="button" class="profile-setup-close-btn" onclick="App.closeFarmerAuthModal()" aria-label="Close modal">&times;</button>
+      </div>
+
+      <!-- STICKY 3-STEP PROGRESS INDICATOR -->
+      <div class="profile-setup-stepper" id="profile-setup-stepper">
+        <div class="stepper-item active" id="stepper-step-1" onclick="App.setSetupStep(1)">
+          <div class="stepper-circle" id="stepper-circle-1">1</div>
+          <span class="stepper-text">Farmer</span>
+        </div>
+        <div class="stepper-divider" id="stepper-div-1"></div>
+        <div class="stepper-item pending" id="stepper-step-2" onclick="App.setSetupStep(2)">
+          <div class="stepper-circle" id="stepper-circle-2">2</div>
+          <span class="stepper-text">Farm</span>
+        </div>
+        <div class="stepper-divider" id="stepper-div-2"></div>
+        <div class="stepper-item pending" id="stepper-step-3" onclick="App.setSetupStep(3)">
+          <div class="stepper-circle" id="stepper-circle-3">3</div>
+          <span class="stepper-text">Production</span>
+        </div>
+      </div>
+
+      <!-- FORM CONTENT (WITH SCROLLABLE BODY) -->
+      <form id="form-farmer-setup" onsubmit="App.saveFarmerDetailsSetup(event)" style="display: flex; flex-direction: column; flex: 1; min-height: 0; margin: 0;">
+        
+        <div class="profile-setup-body">
+          
+          <!-- ==========================================
+               STEP 1: FARMER INFORMATION
+               ========================================== -->
+          <div class="setup-step-pane active" id="setup-step-1">
+            <div class="setup-section-heading">
+              <h4 class="setup-section-title">👨‍🌾 Farmer Information</h4>
+              <p class="setup-section-desc">Tell us a little about yourself.</p>
+            </div>
+
+            <!-- Google Account Security & Connection Box -->
+            <div class="setup-google-card">
+              <div class="setup-google-top">
+                <span class="setup-google-label">🔐 Google Account</span>
+                <span class="setup-connected-badge" id="google-auth-active-info">
+                  <span class="setup-badge-dot"></span>
+                  <span id="google-auth-status-text">Connected</span>
+                </span>
+              </div>
+              <div class="setup-google-body">
+                <div class="setup-google-account-info">
+                  <div class="setup-google-email" id="google-auth-email-display">sanjaivish18@gmail.com</div>
+                  <span class="setup-google-status-text">Used to verify and sync field orders to cloud</span>
+                </div>
+                <button type="button" class="btn-setup-google-change" id="btn-google-auth-trigger" onclick="App.handleGoogleFarmerAuth()">
+                  <svg width="15" height="15" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                  </svg>
+                  <span id="google-auth-btn-text">Change Google Account</span>
+                </button>
+              </div>
+
+              <!-- Fallback if remote OAuth is in offline/demo mode -->
+              <div id="google-auth-fallback-box" class="setup-oauth-fallback-box hidden">
+                <p class="font-bold mb-1" id="google-auth-fallback-msg">Google provider returned a notice.</p>
+                <p class="text-[11px] mb-2 text-muted">You can continue with a Google Demo Account:</p>
+                <button type="button" class="btn btn-secondary btn-sm w-100" onclick="App.handleDemoGoogleFarmerAuth()">
+                  Continue as Google Demo Farmer (Murugan Palanisamy)
+                </button>
+              </div>
+            </div>
+
+            <!-- Farmer Name Field -->
+            <div class="setup-form-group">
+              <label class="setup-form-label" for="setup-farmer-name">
+                Farmer Name <span class="setup-required-star">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="setup-farmer-name" 
+                class="setup-input-control" 
+                required 
+                placeholder="e.g. Sanjai"
+                autocomplete="name"
+                onblur="App.validateSetupField('farmer-name')"
+                oninput="App.clearSetupFieldError('farmer-name')"
+              >
+              <div class="setup-error-msg" id="err-setup-farmer-name">Farmer Name is required.</div>
+            </div>
+
+            <!-- Contact Mobile Field -->
+            <div class="setup-form-group">
+              <label class="setup-form-label" for="setup-farmer-phone">
+                Contact Mobile
+              </label>
+              <input 
+                type="tel" 
+                id="setup-farmer-phone" 
+                class="setup-input-control" 
+                placeholder="+91 94421 88990"
+                autocomplete="tel"
+                onblur="App.validateSetupField('farmer-phone')"
+                oninput="App.clearSetupFieldError('farmer-phone')"
+              >
+              <div class="setup-help-text">Direct mobile number for order dispatch alerts and consumer queries.</div>
+              <div class="setup-error-msg" id="err-setup-farmer-phone">Please enter a valid mobile number (e.g. +91 94421 88990).</div>
+            </div>
+          </div>
+
+          <!-- ==========================================
+               STEP 2: FARM INFORMATION & LOCATION
+               ========================================== -->
+          <div class="setup-step-pane" id="setup-step-2">
+            <div class="setup-section-heading">
+              <h4 class="setup-section-title">🌱 Farm Information</h4>
+              <p class="setup-section-desc">Tell us about your farm.</p>
+            </div>
+
+            <!-- Farm Name Field -->
+            <div class="setup-form-group">
+              <label class="setup-form-label" for="setup-farm-name">
+                Farm Name <span class="setup-required-star">*</span>
+              </label>
+              <input 
+                type="text" 
+                id="setup-farm-name" 
+                class="setup-input-control" 
+                required 
+                placeholder="e.g. Thennam Thoppu Natural Farm"
+                onblur="App.validateSetupField('farm-name')"
+                oninput="App.clearSetupFieldError('farm-name')"
+              >
+              <div class="setup-error-msg" id="err-setup-farm-name">Farm Name is required.</div>
+            </div>
+
+            <!-- Village / Area & District 2-Column Responsive Layout -->
+            <div class="setup-grid-2">
+              <div class="setup-form-group">
+                <label class="setup-form-label" for="setup-farmer-village">Village / Area</label>
+                <input 
+                  type="text" 
+                  id="setup-farmer-village" 
+                  class="setup-input-control" 
+                  placeholder="Aliyar"
+                  oninput="App.updateReviewSummary()"
+                >
+              </div>
+              <div class="setup-form-group">
+                <label class="setup-form-label" for="setup-farmer-district">District</label>
+                <input 
+                  type="text" 
+                  id="setup-farmer-district" 
+                  class="setup-input-control" 
+                  value="Coimbatore"
+                  oninput="App.updateReviewSummary()"
+                >
+              </div>
+            </div>
+
+            <!-- Farm Gate Address -->
+            <div class="setup-form-group">
+              <label class="setup-form-label" for="setup-farmer-address">Farm Gate Address</label>
+              <input 
+                type="text" 
+                id="setup-farmer-address" 
+                class="setup-input-control" 
+                placeholder="Aliyar Road, Pollachi, Tamil Nadu"
+                oninput="App.updateReviewSummary()"
+              >
+              <div class="setup-help-text">Exact pickup location for consumer doorstep drivers and farm-gate collections.</div>
+            </div>
+
+            <!-- Farm Location Card with Map -->
+            <div class="setup-location-card">
+              <div class="setup-location-header">
+                <span class="setup-location-title">📍 Farm Location</span>
+                <span class="text-xs text-muted" id="setup-gps-acc-badge">Interactive Geographic Map</span>
+              </div>
+
+              <!-- Interactive Map Container -->
+              <div class="setup-map-container" id="setup-farm-map">
+                <!-- Leaflet Map Mounts Here -->
+              </div>
+
+              <!-- Latitude / Longitude Display Strip -->
+              <div class="setup-coords-strip">
+                <div>
+                  <span>Latitude: </span><span class="setup-coords-val" id="setup-lat-display">10.598200</span>
+                  <span class="mx-2 text-muted">•</span>
+                  <span>Longitude: </span><span class="setup-coords-val" id="setup-lon-display">76.972100</span>
+                </div>
+                <span class="setup-coords-hint">Drag marker pin or click anywhere on map</span>
+              </div>
+
+              <!-- Location Action Buttons -->
+              <div class="setup-location-actions">
+                <button type="button" class="btn-location-action" id="btn-setup-use-location" onclick="App.handleUseCurrentLocation()">
+                  <span>📍</span>
+                  <span id="btn-setup-use-location-text">Use Current Location</span>
+                </button>
+                <button type="button" class="btn-location-action" id="btn-setup-select-map" onclick="App.focusSetupMapMarker()">
+                  <span>🗺️</span>
+                  <span>Select Location on Map</span>
+                </button>
+              </div>
+
+              <!-- Friendly Location Error Notice -->
+              <div class="setup-location-error-banner" id="setup-location-error">
+                Location access is unavailable. You can select your farm location manually on the map.
+              </div>
+            </div>
+          </div>
+
+          <!-- ==========================================
+               STEP 3: FARM PRODUCTION & REVIEW
+               ========================================== -->
+          <div class="setup-step-pane" id="setup-step-3">
+            <div class="setup-section-heading">
+              <h4 class="setup-section-title">🌾 Farm Production</h4>
+              <p class="setup-section-desc">Tell us what you grow.</p>
+            </div>
+
+            <!-- Crops Tag / Chip Interface -->
+            <div class="setup-form-group">
+              <label class="setup-form-label">
+                Crops Cultivated
+              </label>
+              
+              <!-- Selected Crops Chips Container -->
+              <div class="setup-crops-box" id="setup-crops-chip-list">
+                <!-- Dynamically rendered chips (e.g. Tomatoes, Coconuts, Shallots) -->
+              </div>
+
+              <!-- Hidden input to preserve existing form submission and sync -->
+              <input type="hidden" id="setup-farmer-crops" value="Tomatoes, Coconuts, Shallots">
+
+              <div class="d-flex align-center gap-2">
+                <button type="button" class="btn-add-crop-trigger" id="btn-add-crop-trigger" onclick="App.toggleCropPicker(true)">
+                  <span>＋</span>
+                  <span>Add Crop</span>
+                </button>
+                <span class="text-xs text-muted">Select from recommended crops or add custom</span>
+              </div>
+
+              <!-- Searchable Crop Selector Modal / Popover -->
+              <div class="setup-crop-picker-card" id="setup-crop-picker-card">
+                <div class="crop-search-bar">
+                  <input 
+                    type="text" 
+                    id="setup-crop-search-input" 
+                    class="setup-input-control" 
+                    style="min-height: 38px; padding: 0.5rem 0.85rem;" 
+                    placeholder="Search crop or type custom name..."
+                    oninput="App.filterCropSuggestions()"
+                    onkeydown="if(event.key==='Enter'){event.preventDefault(); App.addCustomSetupCrop();}"
+                  >
+                  <button type="button" class="btn btn-primary btn-sm" onclick="App.addCustomSetupCrop()">Add</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="App.toggleCropPicker(false)">Close</button>
+                </div>
+
+                <div class="text-[11px] font-bold text-muted mb-1">SUGGESTED CROPS:</div>
+                <div class="crop-suggestions-grid" id="setup-crop-suggestions">
+                  <!-- Suggested buttons rendered by App.initCropSuggestions() -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Optional Farm Details Expandable Accordion -->
+            <div class="setup-accordion" id="setup-optional-accordion">
+              <div class="setup-accordion-header" onclick="App.toggleOptionalAccordion()">
+                <span>⚙️ Additional Farm Details (Optional)</span>
+                <span class="setup-accordion-chevron" id="setup-accordion-chevron">▼</span>
+              </div>
+              <div class="setup-accordion-body">
+                <div class="setup-grid-2">
+                  <div class="setup-form-group">
+                    <label class="setup-form-label" for="setup-farm-size">Farm Size</label>
+                    <input type="text" id="setup-farm-size" class="setup-input-control" placeholder="e.g. 5 Acres">
+                  </div>
+                  <div class="setup-form-group">
+                    <label class="setup-form-label" for="setup-farm-type">Farming Type</label>
+                    <select id="setup-farm-type" class="setup-input-control">
+                      <option value="organic">100% Certified Organic</option>
+                      <option value="natural" selected>Natural Farming (ZBNF)</option>
+                      <option value="conventional">Conventional Farming</option>
+                      <option value="hydroponic">Hydroponic / Greenhouse</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="setup-grid-2">
+                  <div class="setup-form-group">
+                    <label class="setup-form-label" for="setup-irrigation-type">Irrigation Source</label>
+                    <select id="setup-irrigation-type" class="setup-input-control">
+                      <option value="river">Aliyar River &amp; Canal</option>
+                      <option value="drip">Drip Irrigation</option>
+                      <option value="borewell">Deep Borewell</option>
+                      <option value="rainfed">Rainfed / Monsoon</option>
+                    </select>
+                  </div>
+                  <div class="setup-form-group">
+                    <label class="setup-form-label" for="setup-years-farming">Years of Farming</label>
+                    <input type="text" id="setup-years-farming" class="setup-input-control" placeholder="e.g. 15 Years">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Compact Profile Review Summary -->
+            <div class="setup-review-card">
+              <div class="setup-review-heading">PROFILE SUMMARY</div>
+              <div class="setup-review-grid">
+                <!-- Farmer Info -->
+                <div class="setup-review-item">
+                  <div class="setup-review-item-content">
+                    <span class="setup-review-label">👨‍🌾 Farmer</span>
+                    <span class="setup-review-val" id="review-farmer-name">Sanjai</span>
+                  </div>
+                  <button type="button" class="btn-review-edit" onclick="App.setSetupStep(1)">[ Edit ]</button>
+                </div>
+
+                <!-- Contact Mobile -->
+                <div class="setup-review-item">
+                  <div class="setup-review-item-content">
+                    <span class="setup-review-label">📞 Mobile</span>
+                    <span class="setup-review-val" id="review-farmer-phone">+91 94421 88990</span>
+                  </div>
+                  <button type="button" class="btn-review-edit" onclick="App.setSetupStep(1)">[ Edit ]</button>
+                </div>
+
+                <!-- Farm Name -->
+                <div class="setup-review-item">
+                  <div class="setup-review-item-content">
+                    <span class="setup-review-label">🌱 Farm</span>
+                    <span class="setup-review-val" id="review-farm-name">Thennam Thoppu Natural</span>
+                  </div>
+                  <button type="button" class="btn-review-edit" onclick="App.setSetupStep(2)">[ Edit ]</button>
+                </div>
+
+                <!-- Location -->
+                <div class="setup-review-item">
+                  <div class="setup-review-item-content">
+                    <span class="setup-review-label">📍 Location</span>
+                    <span class="setup-review-val" id="review-farm-location">Aliyar, Coimbatore</span>
+                  </div>
+                  <button type="button" class="btn-review-edit" onclick="App.setSetupStep(2)">[ Edit ]</button>
+                </div>
+              </div>
+
+              <!-- Crops Row in Review -->
+              <div class="setup-review-item mt-2">
+                <div class="setup-review-item-content" style="width: 100%;">
+                  <span class="setup-review-label">🌾 Crops</span>
+                  <span class="setup-review-val" id="review-farm-crops">Tomatoes, Coconuts, Shallots</span>
+                </div>
+                <button type="button" class="btn-review-edit" onclick="App.toggleCropPicker(true)">[ Edit ]</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- STICKY MODAL FOOTER WITH ALWAYS VISIBLE ACTIONS -->
+        <div class="profile-setup-footer" id="profile-setup-footer">
+          <!-- Step 1 Footer -->
+          <div class="d-flex justify-between align-center w-100" id="footer-actions-step-1">
+            <button type="button" class="btn-setup-secondary" id="btn-step1-cancel" onclick="App.closeFarmerAuthModal()">Cancel</button>
+            <button type="button" class="btn-setup-primary" id="btn-step1-next" onclick="App.setSetupStep(2)">
+              <span>Continue →</span>
+            </button>
+          </div>
+
+          <!-- Step 2 Footer -->
+          <div class="d-flex justify-between align-center w-100 hidden" id="footer-actions-step-2">
+            <button type="button" class="btn-setup-secondary" id="btn-step2-back" onclick="App.setSetupStep(1)">← Back</button>
+            <button type="button" class="btn-setup-primary" id="btn-step2-next" onclick="App.setSetupStep(3)">
+              <span>Continue →</span>
+            </button>
+          </div>
+
+          <!-- Step 3 Footer -->
+          <div class="d-flex justify-between align-center w-100 hidden" id="footer-actions-step-3">
+            <button type="button" class="btn-setup-secondary" id="btn-step3-back" onclick="App.setSetupStep(2)">← Back</button>
+            <button type="submit" class="btn-setup-primary" id="btn-setup-submit">
+              <span id="btn-setup-submit-text">Save Farm Details</span>
+            </button>
+          </div>
+        </div>
+
+      </form>
+
+      <!-- ==========================================
+           SUCCESS CELEBRATION STATE
+           ========================================== -->
+      <div class="setup-success-card hidden" id="setup-success-card">
+        <div class="setup-success-icon-box">🎉</div>
+        <h3 class="setup-success-title">Farm Profile Ready!</h3>
+        <p class="setup-success-desc">
+          Your farm profile has been successfully set up. You can now start managing harvest listings, stock levels, and consumer orders.
+        </p>
+        <button type="button" class="btn-setup-primary" id="btn-setup-continue-dashboard" onclick="App.handleFinishSetupAndClose()" style="margin-top: 0.5rem; width: 100%; max-width: 280px;">
+          <span>Continue to Dashboard →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GOOGLE ACCOUNT SELECTOR MODAL (Google Identity Services UX) -->
+  <div class="google-picker-backdrop hidden" id="google-account-picker-modal" onclick="if(event.target===this)App.closeGoogleAccountPicker()">
+    <div class="google-picker-dialog">
+      <div class="google-picker-header">
+        <div class="google-picker-topline">
+          <div class="google-picker-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            <span class="google-brand-label">Sign in with Google</span>
+          </div>
+          <button type="button" class="google-picker-close-btn" onclick="App.closeGoogleAccountPicker()" title="Close dialog">&times;</button>
+        </div>
+        <h3 class="google-picker-title">Choose an account</h3>
+        <p class="google-picker-subtitle">to continue to <strong style="color:#202124;">FarmDirect Farmer Portal</strong></p>
+      </div>
+
+      <div class="google-picker-body">
+        <div class="google-account-list">
+          <button type="button" class="google-account-card" onclick="App.selectGoogleAccount('sanjaivish18@gmail.com', 'Sanjai Karthik')">
+            <div class="google-avatar-circle" style="background:#1b4332; color:#fff;">S</div>
+            <div class="google-account-meta">
+              <div class="google-account-name-row">
+                <span class="google-account-name">Sanjai Karthik</span>
+                <span class="google-account-chip active">Signed In</span>
+              </div>
+              <div class="google-account-email">sanjaivish18@gmail.com</div>
+              <div class="google-account-farm-hint">🌾 Organic Farm &bull; Pollachi Rural</div>
+            </div>
+            <div class="google-account-chevron">›</div>
+          </button>
+
+          <button type="button" class="google-account-card" onclick="App.selectGoogleAccount('murugan.pollachi@demo.farmbridge.in', 'Murugan Palanisamy')">
+            <div class="google-avatar-circle" style="background:#2d6a4f; color:#fff;">M</div>
+            <div class="google-account-meta">
+              <div class="google-account-name-row">
+                <span class="google-account-name">Murugan Palanisamy</span>
+                <span class="google-account-chip verified">Verified Grower</span>
+              </div>
+              <div class="google-account-email">murugan.pollachi@demo.farmbridge.in</div>
+              <div class="google-account-farm-hint">🌴 Coconut &amp; Spices &bull; Aliyar</div>
+            </div>
+            <div class="google-account-chevron">›</div>
+          </button>
+        </div>
+
+        <!-- Custom Account input toggle -->
+        <div class="google-custom-section">
+          <div class="google-custom-header">
+            <div class="google-avatar-circle custom-avatar">＋</div>
+            <div class="google-custom-text">
+              <span class="google-custom-title">Use another Google account</span>
+              <span class="google-custom-sub">Enter any @gmail.com address</span>
+            </div>
+          </div>
+          <div class="google-custom-entry">
+            <input type="email" id="google-custom-email-input" class="google-custom-input" placeholder="e.g. karthik.farmer@gmail.com">
+            <button type="button" class="google-custom-btn" onclick="App.selectCustomGoogleAccount()">Continue</button>
+          </div>
+        </div>
+
+        <div class="google-picker-disclaimer">
+          To continue, Google will share your name, email address, language preference, and profile picture with FarmDirect. Before using this app, review FarmDirect's <a href="javascript:void(0)" style="color:#1a73e8;text-decoration:none;">Privacy Policy</a> and <a href="javascript:void(0)" style="color:#1a73e8;text-decoration:none;">Terms of Service</a>.
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 5. REUSABLE CONFIRMATION MODAL -->
   <div class="modal-backdrop hidden" id="generic-confirm-modal">
     <div class="modal-dialog modal-dialog-sm">
@@ -1279,12 +2005,15 @@
   <div class="toast-container" id="toast-container"></div>
 
   <!-- APPLICATION SCRIPTS (Vanilla JS, Zero Bundlers/CDNs) -->
+  <script src="./supabase.js"></script>
   <script src="./db.js"></script>
+  <script src="./i18n.js"></script>
   <script src="./products.js"></script>
   <script src="./orders.js"></script>
   <script src="./inventory.js"></script>
   <script src="./reports.js"></script>
   <script src="./sync.js"></script>
+  <script src="./leaflet.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>

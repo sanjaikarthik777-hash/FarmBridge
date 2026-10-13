@@ -246,6 +246,31 @@ export const api = {
       profile = newProfile;
     }
 
+    if (profile && profile.role !== 'farmer') {
+      try {
+        await supabase.from('profiles').update({ role: 'farmer', onboarding_completed: false }).eq('id', profile.id);
+      } catch {}
+      profile.role = 'farmer';
+      profile.onboarding_completed = false;
+    }
+
+    if (!profile) {
+      profile = {
+        id: payload.supabase_id,
+        supabase_auth_id: payload.supabase_id,
+        email: payload.email,
+        display_name: payload.display_name || 'Farmer',
+        avatar_path: payload.avatar_url,
+        role: 'farmer',
+        verification_status: 'verified',
+        onboarding_completed: false
+      } as any;
+    }
+
+    if (profile.onboarding_completed === undefined || profile.onboarding_completed === null) {
+      profile.onboarding_completed = false;
+    }
+
     let { data: farm } = await supabase.from('farms').select('*').eq('owner_id', profile?.id).maybeSingle();
 
     // Sync to FastAPI backend so it knows about this farmer

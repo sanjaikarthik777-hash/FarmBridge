@@ -98,6 +98,7 @@ class ProfileBase(BaseModel):
     email: Optional[str] = None
     role: RoleEnum
     preferred_language: str = "en"
+    onboarding_completed: Optional[bool] = False
 
 class ProfileResponse(ProfileBase):
     id: str
@@ -107,6 +108,7 @@ class ProfileResponse(ProfileBase):
     default_longitude: Optional[float] = None
     default_address: Optional[str] = None
     created_at: datetime
+    onboarding_completed: Optional[bool] = False
 
 # --- FARMS & GEOLOCATION ---
 class FarmBase(BaseModel):

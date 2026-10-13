@@ -4,6 +4,13 @@
  * the moment network connectivity is detected (even for a brief 2-minute coverage window).
  */
 
+const getSyncApiBase = () => {
+  if (window.location.port === '5000') {
+    return 'http://127.0.0.1:8001';
+  }
+  return '';
+};
+
 const SyncEngine = {
   isServerReachable: false,
   isSyncing: false,
@@ -64,7 +71,7 @@ const SyncEngine = {
       const timeoutId = setTimeout(() => controller.abort(), 3500);
 
       // Probe lightweight health endpoint
-      const res = await fetch('/api/v1/sync/health', {
+      const res = await fetch(getSyncApiBase() + '/api/v1/sync/health', {
         method: 'GET',
         cache: 'no-store',
         signal: controller.signal
@@ -124,7 +131,7 @@ const SyncEngine = {
       }));
 
       const batchPayload = {
-        farmer_id: 'f1000000-0000-0000-0000-000000000001',
+        farmer_id: settings.farmerId || 'f1000000-0000-0000-0000-000000000001',
         farm_name: settings.farmName || 'Thennam Thoppu Natural Farm',
         last_synced_at: this.lastSyncTimestamp,
         products: pending.products,
@@ -136,7 +143,7 @@ const SyncEngine = {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 6000); // 6s burst timeout
 
-      const response = await fetch('/api/v1/sync/farmer-batch', {
+      const response = await fetch(getSyncApiBase() + '/api/v1/sync/farmer-batch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(batchPayload),
@@ -283,21 +290,21 @@ const SyncEngine = {
     if (settingsOfflinePill && settingsOfflineText) {
       if (this.isSyncing) {
         settingsOfflinePill.className = 'status-pill status-syncing';
-        settingsOfflineText.innerText = 'Syncing...';
+        settingsOfflineText.innerText = window.I18n ? I18n.t('btn_syncing') : 'Syncing...';
         if (settingsSyncStatusText) settingsSyncStatusText.innerText = 'Syncing changes with server...';
       } else if (this.isServerReachable && !this.simulatedNoInternet) {
         settingsOfflinePill.className = 'status-pill status-online';
-        settingsOfflineText.innerText = 'Online';
+        settingsOfflineText.innerText = window.I18n ? I18n.t('offline_pill_online') : 'Online';
         if (settingsSyncStatusText) {
           settingsSyncStatusText.innerText = pendingCount > 0
             ? `${pendingCount} local changes ready to sync.`
-            : 'All data is synchronized and backed up locally.';
+            : (window.I18n ? I18n.t('offline_sync_status_online') : 'All data is synchronized and backed up locally.');
         }
       } else {
         settingsOfflinePill.className = 'status-pill status-offline';
-        settingsOfflineText.innerText = 'Offline — Your data is saved on this device';
+        settingsOfflineText.innerText = window.I18n ? I18n.t('offline_pill_offline') : 'Offline — Your data is saved on this device';
         if (settingsSyncStatusText) {
-          settingsSyncStatusText.innerText = 'All products, orders, and settings remain fully accessible offline.';
+          settingsSyncStatusText.innerText = window.I18n ? I18n.t('offline_sync_status_offline') : 'All products, orders, and settings remain fully accessible offline.';
         }
       }
     }

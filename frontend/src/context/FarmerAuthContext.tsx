@@ -63,6 +63,33 @@ export const FarmerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
    */
   const verifyFarmerSession = useCallback(async (session: Session | null) => {
     if (!session?.user) {
+      try {
+        const savedFarmer = localStorage.getItem('farmbridge_google_farmer');
+        if (savedFarmer) {
+          const parsed = JSON.parse(savedFarmer);
+          if (parsed && parsed.email) {
+            const mockUser: any = {
+              id: parsed.supabase_id || 'farmer_' + btoa(parsed.email).replace(/=/g, ''),
+              email: parsed.email,
+              user_metadata: {
+                full_name: parsed.display_name,
+                name: parsed.display_name,
+                avatar_url: parsed.avatar_url,
+              },
+            };
+            setSupabaseUser(mockUser);
+            if (parsed.profile) {
+              setFarmerProfile(parsed.profile);
+              if (parsed.token) setAuthToken(parsed.token);
+              setStatus('authenticated');
+              return;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to parse saved farmer profile:', err);
+      }
+
       setStatus('unauthenticated');
       setSupabaseUser(null);
       setFarmerProfile(null);
@@ -95,6 +122,21 @@ export const FarmerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
       const profile = synced.profile;
       setFarmerProfile(profile);
+
+      // Persist in localStorage for resilient session recovery
+      try {
+        localStorage.setItem(
+          'farmbridge_google_farmer',
+          JSON.stringify({
+            supabase_id: authUser.id,
+            email: authUser.email,
+            display_name: displayName,
+            avatar_url: avatarUrl,
+            profile,
+            token: synced.token,
+          })
+        );
+      } catch (e) {}
 
       // Enforce role check on frontend (backend also enforces)
       if (profile.role !== 'farmer') {
@@ -139,6 +181,9 @@ export const FarmerAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     } catch (e) {
       console.error('Backend logout error:', e);
     }
+    try {
+      localStorage.removeItem('farmbridge_google_farmer');
+    } catch (e) {}
     setAuthToken(null);
     setStatus('unauthenticated');
     setSupabaseUser(null);

@@ -97,6 +97,14 @@ export const FarmerPortalLayout: React.FC<FarmerPortalLayoutProps> = ({
               </button>
             )}
 
+            <a
+              href="/offline/"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#245C3A] hover:bg-[#185336] text-white text-xs font-bold transition-all shadow-xs cursor-pointer no-underline"
+              title="Open Standalone Offline App Dashboard"
+            >
+              <span>📱 Offline App</span>
+            </a>
+
             <button
               onClick={onNavigateToConsumer}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#E5E9E1] bg-[#FAFBF7] hover:bg-[#EAF3E7] text-[#202820] text-xs font-bold transition-all cursor-pointer shadow-2xs"

@@ -5,13 +5,15 @@
  * allowing instant offline startup in airplane mode.
  */
 
-const CACHE_NAME = 'farmdirect-farmer-v6';
+const CACHE_NAME = 'farmdirect-farmer-v12';
 
 // All essential local assets required to run 100% offline
 const APP_SHELL_ASSETS = [
   './',
   './index.html',
   './styles.css',
+  './supabase.js',
+  './i18n.js',
   './app.js',
   './db.js',
   './products.js',
@@ -38,7 +40,6 @@ self.addEventListener('install', (event) => {
         return cache.addAll(APP_SHELL_ASSETS);
       })
       .then(() => {
-        // Force waiting service worker to become active
         return self.skipWaiting();
       })
       .catch((err) => {
@@ -66,7 +67,6 @@ self.addEventListener('activate', (event) => {
         );
       })
       .then(() => {
-        // Immediately take control of all open client tabs
         return self.clients.claim();
       })
   );
@@ -74,8 +74,9 @@ self.addEventListener('activate', (event) => {
 
 /**
  * 3. Fetch Event - Genuine Offline Handling
- * Cache-First with background revalidation for local app assets.
- * Offline navigation falls back to cached index.html.
+ * Network-First with Cache Fallback:
+ * Always fetches the latest code when network/localhost is accessible,
+ * and seamlessly serves from offline cache when in airplane mode or disconnected.
  */
 self.addEventListener('fetch', (event) => {
   const req = event.request;
@@ -83,9 +84,7 @@ self.addEventListener('fetch', (event) => {
   // Only handle GET requests
   if (req.method !== 'GET') return;
 
-  const url = new URL(req.url);
-
-  // If request is a page navigation (HTML document)
+  // Handle navigation requests
   if (req.mode === 'navigate') {
     event.respondWith(
       fetch(req)
@@ -103,51 +102,27 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Handle local application asset requests
+  // Handle all application shell assets
   event.respondWith(
-    caches.match(req).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Fetch from network in background to update cache for next load (Stale-While-Revalidate)
-        fetch(req)
-          .then((networkResponse) => {
-            if (networkResponse && networkResponse.status === 200) {
-              caches.open(CACHE_NAME).then((cache) => {
-                cache.put(req, networkResponse.clone());
-              });
-            }
-          })
-          .catch(() => {
-            // Network failure is normal and expected when offline/in airplane mode
-          });
-
-        return cachedResponse;
-      }
-
-      // If not in cache, fetch from network and cache response
-      return fetch(req)
-        .then((networkResponse) => {
-          if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-            return networkResponse;
-          }
-
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(req, responseToCache);
-          });
-
-          return networkResponse;
-        })
-        .catch(() => {
-          // If offline and request is an image or icon, fallback to icon.svg
-          if (req.destination === 'image') {
-            return caches.match('./icons/icon.svg');
-          }
-          // Return generic error or empty response
+    fetch(req)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        // Offline fallback
+        return caches.match(req, { ignoreSearch: true }).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          if (req.destination === 'image') return caches.match('./icons/icon.svg');
           return new Response('Offline: Content not available in local cache.', {
             status: 503,
             statusText: 'Service Unavailable (Offline)'
           });
         });
-    })
+      })
   );
 });
+

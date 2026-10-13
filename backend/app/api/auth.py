@@ -409,6 +409,7 @@ def supabase_farmer_sync(
             "default_latitude": 10.5982,   # Pollachi / Aliyar area default
             "default_longitude": 76.9721,
             "default_address": "Pollachi, Tamil Nadu",
+            "onboarding_completed": False,
             "created_at": datetime.now()
         }
         store.profiles[data.supabase_id] = matched_profile

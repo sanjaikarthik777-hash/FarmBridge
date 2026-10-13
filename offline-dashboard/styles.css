@@ -1890,3 +1890,1910 @@ html, body {
     stroke-width: 2.5;
   }
 }
+
+/* =========================================================
+   FARMER AUTHENTICATION LOGIN GATE
+   Enforces mandatory login before accessing farmer profile & dashboard
+   ========================================================= */
+.farmer-login-gate {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #08170f;
+  background: radial-gradient(circle at 50% 20%, #173d2b 0%, #0d281a 60%, #06150d 100%);
+  overflow-y: auto;
+  padding: 1.5rem;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  box-sizing: border-box;
+}
+
+.farmer-login-gate.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.gate-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+/* Master Luxury Split Container */
+.gate-wrapper-luxury {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1060px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 35px 80px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+  animation: gateCardPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes gateCardPop {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* LEFT COLUMN: HERO SHOWCASE */
+.gate-hero-panel {
+  position: relative;
+  background: linear-gradient(145deg, rgba(10, 36, 24, 0.94) 0%, rgba(18, 62, 42, 0.88) 100%),
+              url('https://images.unsplash.com/photo-1592417817098-8f3d6ef23a49?w=1200&auto=format&fit=crop') center/cover no-repeat;
+  padding: 2.75rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #ffffff;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.gate-hero-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+.gate-hero-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.gate-hero-logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.gate-hero-brand-name {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gate-hero-pro-badge {
+  background: #34d399;
+  color: #064e3b;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+}
+
+.gate-hero-brand-sub {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
+}
+
+.gate-hero-pitch {
+  margin-bottom: 2rem;
+}
+
+.gate-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  background: rgba(52, 211, 153, 0.15);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: #6ee7b7;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.gate-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
+  animation: pulse-gate 2s infinite;
+}
+
+@keyframes pulse-gate {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.gate-hero-title {
+  font-size: 1.85rem;
+  font-weight: 900;
+  line-height: 1.25;
+  color: #ffffff;
+  margin: 0 0 0.85rem 0;
+  letter-spacing: -0.02em;
+}
+
+.gate-hero-description {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
+  margin: 0;
+}
+
+/* Hero Impact Metrics */
+.gate-hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.gate-metric-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 0.85rem 0.75rem;
+  text-align: center;
+  backdrop-filter: blur(4px);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.gate-metric-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.gate-metric-val {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #6ee7b7;
+  line-height: 1.1;
+}
+
+.gate-metric-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 0.2rem;
+}
+
+.gate-metric-note {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 0.1rem;
+}
+
+/* Testimonial Quote */
+.gate-farmer-quote-card {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 1rem 1.15rem;
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.gate-quote-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  color: #34d399;
+  font-family: Georgia, serif;
+  margin-bottom: 0.2rem;
+}
+
+.gate-quote-text {
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 0.75rem 0;
+  font-style: italic;
+}
+
+.gate-quote-author {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.gate-quote-avatar {
+  font-size: 1.35rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gate-quote-name {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.gate-verified-tick {
+  color: #34d399;
+  font-size: 0.8rem;
+}
+
+.gate-quote-location {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.gate-security-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 600;
+  padding-top: 1rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.15);
+}
+
+/* RIGHT COLUMN: LOGIN FORM PANEL */
+.gate-login-panel {
+  background: #ffffff;
+  padding: 2.5rem 2.35rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.gate-card {
+  width: 100%;
+}
+
+.gate-access-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 20px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+  font-size: 0.72rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.gate-leaf-icon {
+  font-size: 0.85rem;
+}
+
+.gate-card-title {
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.gate-card-desc {
+  font-size: 0.825rem;
+  color: #4b5563;
+  margin-top: 0.45rem;
+  line-height: 1.45;
+}
+
+.gate-card-body {
+  margin-top: 1.5rem;
+}
+
+/* Luxury Google Sign In Button */
+.btn-google-sign-in-luxury {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.15rem;
+  background: #ffffff;
+  border: 1.5px solid #d1d5db;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+}
+
+.btn-google-sign-in-luxury:hover {
+  background: #f9fafb;
+  border-color: #1b4332;
+  box-shadow: 0 4px 16px rgba(27, 67, 50, 0.15);
+  transform: translateY(-1px);
+}
+
+.btn-google-sign-in-luxury:active {
+  transform: translateY(0);
+}
+
+.google-logo-wrapper {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+}
+
+.google-btn-text-group {
+  flex: 1;
+  margin-left: 0.85rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.google-btn-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.google-btn-sub {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-top: 0.1rem;
+}
+
+.google-btn-arrow {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1b4332;
+  transition: transform 0.15s ease;
+}
+
+.btn-google-sign-in-luxury:hover .google-btn-arrow {
+  transform: translateX(3px);
+}
+
+/* Divider */
+.gate-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 1.25rem 0;
+  color: #9ca3af;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.gate-divider::before,
+.gate-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.gate-divider span {
+  padding: 0 0.75rem;
+}
+
+/* Farmer Quick Profiles */
+.gate-farmer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.gate-farmer-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.95rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.gate-farmer-card:hover {
+  background: #ecfdf5;
+  border-color: #10b981;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12);
+}
+
+.gate-farmer-card-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.gate-farmer-avatar-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #e5e7eb;
+  border: 1px solid #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.gate-farmer-name {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.gate-tag-pill {
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 0.1rem 0.4rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.gate-tag-pill.active {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.gate-tag-pill.verified {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.gate-farmer-farm {
+  font-size: 0.72rem;
+  color: #6b7280;
+  margin-top: 0.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.gate-farmer-arrow {
+  color: #1b4332;
+  font-size: 1rem;
+  font-weight: 800;
+  transition: transform 0.15s ease;
+}
+
+.gate-farmer-card:hover .gate-farmer-arrow {
+  transform: translateX(3px);
+}
+
+/* Custom Google Email Accordion */
+.gate-custom-google-wrapper {
+  margin-top: 0.85rem;
+}
+
+.gate-custom-toggle-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.75rem;
+  background: transparent;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  color: #475569;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.gate-custom-toggle-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #1e293b;
+}
+
+.gate-custom-google-box {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  animation: gate-fade-in 0.2s ease;
+}
+
+.gate-custom-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.gate-custom-input {
+  flex: 1;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1e293b;
+  outline: none;
+}
+
+.gate-custom-input:focus {
+  border-color: #1b4332;
+  box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.12);
+}
+
+.gate-custom-submit-btn {
+  padding: 0.55rem 0.95rem;
+  background: #1b4332;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.gate-custom-submit-btn:hover {
+  background: #143326;
+}
+
+.gate-custom-hint {
+  font-size: 0.68rem;
+  color: #64748b;
+  margin: 0.4rem 0 0 0;
+}
+
+/* Trust Chips */
+.gate-feature-chips {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.gate-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #065f46;
+  background: #ecfdf5;
+  padding: 0.35rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid #a7f3d0;
+}
+
+.gate-card-footer-notice {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.65rem;
+  color: #9ca3af;
+  line-height: 1.4;
+}
+
+/* Responsive breakpoint for split gate */
+@media (max-width: 900px) {
+  .gate-wrapper-luxury {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+  }
+  .gate-hero-panel {
+    display: none;
+  }
+  .gate-login-panel {
+    padding: 2rem 1.75rem;
+  }
+}
+
+/* ==========================================================================
+   GOOGLE ACCOUNT SELECTOR MODAL (Google Identity Services Spec)
+   Authentic Google UI with multi-colored G logo, avatar circles & disclaimers
+   ========================================================================== */
+.google-picker-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  z-index: 100005;
+  animation: modal-fade-in 0.2s ease;
+}
+
+.google-picker-dialog {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 450px;
+  overflow: hidden;
+  animation: modal-slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.google-picker-header {
+  padding: 1.5rem 1.6rem 1rem;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.google-picker-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.google-picker-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.google-brand-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #3c4043;
+  letter-spacing: -0.01em;
+}
+
+.google-picker-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.35rem;
+  color: #5f6368;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 50%;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.google-picker-close-btn:hover {
+  background: #f1f3f4;
+  color: #202124;
+}
+
+.google-picker-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #202124;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.google-picker-subtitle {
+  font-size: 0.825rem;
+  color: #5f6368;
+  margin-top: 0.3rem;
+  line-height: 1.4;
+}
+
+.google-picker-body {
+  padding: 1.15rem 1.6rem 1.5rem;
+}
+
+.google-account-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 1.1rem;
+}
+
+.google-account-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid #dadce0;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  width: 100%;
+  text-align: left;
+}
+
+.google-account-card:hover {
+  background: #f8fafd;
+  border-color: #4285f4;
+  box-shadow: 0 4px 14px rgba(66, 133, 244, 0.12);
+  transform: translateY(-1px);
+}
+
+.google-avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.google-avatar-circle.custom-avatar {
+  background: #f1f3f4;
+  color: #5f6368;
+  border: 1px dashed #dadce0;
+}
+
+.google-account-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.google-account-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.google-account-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #202124;
+}
+
+.google-account-chip {
+  font-size: 0.62rem;
+  font-weight: 800;
+  padding: 0.1rem 0.4rem;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.google-account-chip.active {
+  background: #e8f0fe;
+  color: #1a73e8;
+  border: 1px solid #d2e3fc;
+}
+
+.google-account-chip.verified {
+  background: #e6f4ea;
+  color: #137333;
+  border: 1px solid #ceead6;
+}
+
+.google-account-email {
+  font-size: 0.76rem;
+  color: #5f6368;
+  margin-top: 0.1rem;
+}
+
+.google-account-farm-hint {
+  font-size: 0.68rem;
+  color: #80868b;
+  margin-top: 0.1rem;
+}
+
+.google-account-chevron {
+  color: #80868b;
+  font-size: 1.25rem;
+  font-weight: 700;
+  transition: transform 0.15s ease;
+}
+
+.google-account-card:hover .google-account-chevron {
+  color: #1a73e8;
+  transform: translateX(2px);
+}
+
+/* Custom Account Section inside modal */
+.google-custom-section {
+  padding: 0.85rem;
+  background: #f8f9fa;
+  border: 1px solid #dadce0;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.google-custom-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.65rem;
+}
+
+.google-custom-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.google-custom-title {
+  font-size: 0.825rem;
+  font-weight: 700;
+  color: #202124;
+}
+
+.google-custom-sub {
+  font-size: 0.7rem;
+  color: #5f6368;
+}
+
+.google-custom-entry {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.google-custom-input {
+  flex: 1;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: #202124;
+  outline: none;
+  background: #ffffff;
+}
+
+.google-custom-input:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+}
+
+.google-custom-btn {
+  padding: 0.55rem 0.95rem;
+  background: #1a73e8;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.google-custom-btn:hover {
+  background: #1557b0;
+}
+
+.google-picker-disclaimer {
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: #5f6368;
+  text-align: center;
+  padding-top: 0.65rem;
+  border-top: 1px solid #f1f3f4;
+}
+
+/* ==========================================================================
+   PREMIUM 3-STEP FARMER PROFILE & SETUP MODAL
+   Agricultural SaaS Design System (Deep Green, Leaf Green, Soft Natural BG)
+   ========================================================================== */
+
+/* Clean semi-transparent overlay with subtle blur */
+.profile-setup-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(18, 38, 24, 0.52);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+/* Modal Dialog Container - Desktop 700-760px, max-height 85-90vh */
+.profile-setup-dialog {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 48px -12px rgba(18, 48, 28, 0.22), 0 0 0 1px rgba(27, 67, 50, 0.08);
+  width: 100%;
+  max-width: 740px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  animation: modal-slide-up 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-slide-up {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Sticky Modal Header */
+.profile-setup-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: #ffffff;
+  padding: 1.2rem 1.6rem 1rem;
+  border-bottom: 1px solid #eef2ec;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.profile-setup-title-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.profile-setup-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1b4332;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.profile-setup-subtitle {
+  font-size: 0.8125rem;
+  color: #627264;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.profile-setup-close-btn {
+  background: #f8faf7;
+  border: 1px solid #e2e8df;
+  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: #627264;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.profile-setup-close-btn:hover {
+  background: #eaf3e7;
+  color: #1b4332;
+  border-color: #245c3a;
+  transform: scale(1.04);
+}
+
+/* Sticky Stepper Progress Bar */
+.profile-setup-stepper {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  background: #fbfcfb;
+  border-bottom: 1px solid #eef2ec;
+  padding: 0.85rem 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stepper-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.stepper-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  transition: all 0.2s ease;
+}
+
+/* Stepper States */
+.stepper-item.pending .stepper-circle {
+  background: #f0f3ef;
+  color: #7f8c81;
+  border: 1.5px solid #d8e2d5;
+}
+
+.stepper-item.pending .stepper-text {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #7f8c81;
+}
+
+.stepper-item.active .stepper-circle {
+  background: #1b4332;
+  color: #ffffff;
+  border: 1.5px solid #1b4332;
+  box-shadow: 0 0 0 3px rgba(36, 92, 58, 0.2);
+}
+
+.stepper-item.active .stepper-text {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: #1b4332;
+}
+
+.stepper-item.completed .stepper-circle {
+  background: #245c3a;
+  color: #ffffff;
+  border: 1.5px solid #245c3a;
+}
+
+.stepper-item.completed .stepper-text {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #245c3a;
+}
+
+.stepper-divider {
+  flex: 1;
+  height: 2px;
+  background: #e2e8df;
+  margin: 0 0.85rem;
+  border-radius: 2px;
+  transition: background 0.25s ease;
+}
+
+.stepper-divider.completed {
+  background: #245c3a;
+}
+
+/* Scrollable Modal Body */
+.profile-setup-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem 1.6rem;
+  background: #ffffff;
+  min-height: 280px;
+}
+
+/* Step Panes */
+.setup-step-pane {
+  display: none;
+}
+
+.setup-step-pane.active {
+  display: block;
+  animation: step-fade-slide 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes step-fade-slide {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Section Header */
+.setup-section-heading {
+  margin-bottom: 1.35rem;
+}
+
+.setup-section-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #1b4332;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.setup-section-desc {
+  font-size: 0.8125rem;
+  color: #68776a;
+  margin: 0.25rem 0 0 0;
+}
+
+/* Google Account Fintech Card */
+.setup-google-card {
+  background: #f8faf7;
+  border: 1px solid #dbe5d8;
+  border-radius: 14px;
+  padding: 1.15rem 1.25rem;
+  margin-bottom: 1.4rem;
+  transition: border-color 0.15s ease;
+}
+
+.setup-google-card:hover {
+  border-color: #c4d7bf;
+}
+
+.setup-google-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.setup-google-label {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: #1b4332;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.setup-connected-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #c8e6c9;
+}
+
+.setup-badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2e7d32;
+}
+
+.setup-google-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.setup-google-account-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.setup-google-email {
+  font-size: 0.925rem;
+  font-weight: 700;
+  color: #1c261d;
+  word-break: break-all;
+}
+
+.setup-google-status-text {
+  font-size: 0.75rem;
+  color: #68776a;
+}
+
+.btn-setup-google-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: #ffffff;
+  border: 1px solid #ccd8c9;
+  color: #245c3a;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-setup-google-change:hover {
+  background: #eaf3e7;
+  border-color: #245c3a;
+  color: #1b4332;
+  transform: translateY(-1px);
+}
+
+/* Fallback Notice Box inside Modal */
+.setup-oauth-fallback-box {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 10px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  font-size: 0.75rem;
+}
+
+/* Form Groups & Inputs */
+.setup-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1.15rem;
+}
+
+.setup-form-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #1c261d;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.setup-required-star {
+  color: #dc2626;
+  font-weight: 800;
+}
+
+.setup-input-control {
+  width: 100%;
+  padding: 0.72rem 1rem;
+  border: 1.5px solid #dbe5d8;
+  border-radius: 12px;
+  background-color: #ffffff;
+  font-size: 0.875rem;
+  color: #1c261d;
+  outline: none;
+  transition: all 0.18s ease;
+  min-height: 44px;
+}
+
+.setup-input-control:focus {
+  border-color: #245c3a;
+  box-shadow: 0 0 0 3px rgba(36, 92, 58, 0.14);
+}
+
+.setup-input-control.error {
+  border-color: #dc2626;
+  background-color: #fffbfa;
+}
+
+.setup-input-control:disabled {
+  background-color: #f6f8f5;
+  color: #889389;
+  cursor: not-allowed;
+}
+
+.setup-error-msg {
+  font-size: 0.75rem;
+  color: #dc2626;
+  font-weight: 600;
+  display: none;
+  margin-top: 0.25rem;
+}
+
+.setup-error-msg.visible {
+  display: block;
+}
+
+.setup-help-text {
+  font-size: 0.72rem;
+  color: #6f7c70;
+  margin-top: 0.25rem;
+}
+
+/* Responsive Two-Column Layout */
+.setup-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .setup-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+/* Location Card & Interactive Map */
+.setup-location-card {
+  background: #fbfcfb;
+  border: 1px solid #dbe5d8;
+  border-radius: 14px;
+  padding: 1.15rem;
+  margin-top: 1.25rem;
+}
+
+.setup-location-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.setup-location-title {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: #1b4332;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.setup-map-container {
+  width: 100%;
+  height: 230px;
+  border-radius: 12px;
+  border: 1px solid #dbe5d8;
+  overflow: hidden;
+  position: relative;
+  background: #eaf1e8;
+  z-index: 1;
+}
+
+.setup-coords-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.95rem;
+  background: #ffffff;
+  border: 1px solid #e5ede3;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  color: #3c483e;
+}
+
+.setup-coords-val {
+  font-weight: 800;
+  color: #1b4332;
+}
+
+.setup-coords-hint {
+  font-size: 0.72rem;
+  color: #6f7c70;
+}
+
+.setup-location-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.btn-location-action {
+  padding: 0.55rem 0.95rem;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid #cfe0cc;
+  background: #ffffff;
+  color: #245c3a;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 38px;
+}
+
+.btn-location-action:hover {
+  background: #eaf3e7;
+  border-color: #245c3a;
+  color: #1b4332;
+  transform: translateY(-1px);
+}
+
+.setup-location-error-banner {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: none;
+}
+
+.setup-location-error-banner.visible {
+  display: block;
+}
+
+/* Step 3 - Crop Chips & Tag Selector */
+.setup-crops-box {
+  background: #fbfcfb;
+  border: 1.5px dashed #c8dbca;
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  min-height: 85px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.crop-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  background: #eaf3e7;
+  border: 1px solid #bed6bd;
+  color: #1b4332;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.crop-tag-chip:hover {
+  background: #dcebd8;
+  transform: translateY(-1px);
+}
+
+.crop-tag-remove {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  line-height: 1;
+  color: #557757;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.crop-tag-remove:hover {
+  color: #dc2626;
+}
+
+.btn-add-crop-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  border: 1.5px dashed #245c3a;
+  background: #ffffff;
+  color: #245c3a;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-add-crop-trigger:hover {
+  background: #eaf3e7;
+  border-color: #1b4332;
+  color: #1b4332;
+  transform: translateY(-1px);
+}
+
+/* Searchable Crop Selector Modal / Popover */
+.setup-crop-picker-card {
+  background: #ffffff;
+  border: 1px solid #d2ded0;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px -5px rgba(27, 67, 50, 0.15);
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  display: none;
+  animation: crop-picker-appear 0.18s ease;
+}
+
+.setup-crop-picker-card.visible {
+  display: block;
+}
+
+@keyframes crop-picker-appear {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.crop-search-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.crop-suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.45rem;
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 0.25rem 0;
+}
+
+.btn-crop-suggest {
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8df;
+  background: #fafbf9;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #2c3a2e;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+}
+
+.btn-crop-suggest:hover {
+  background: #eaf3e7;
+  border-color: #245c3a;
+  color: #1b4332;
+  transform: translateY(-1px);
+}
+
+.btn-crop-suggest.selected {
+  opacity: 0.45;
+  background: #f0f3ef;
+  pointer-events: none;
+}
+
+/* Optional Farm Details Expandable Accordion */
+.setup-accordion {
+  border: 1px solid #dbe5d8;
+  border-radius: 12px;
+  margin-top: 1.25rem;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.setup-accordion-header {
+  padding: 0.85rem 1.15rem;
+  background: #fbfcfb;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #2c3a2e;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+
+.setup-accordion-header:hover {
+  background: #f4f7f3;
+}
+
+.setup-accordion-chevron {
+  transition: transform 0.2s ease;
+  font-size: 0.8rem;
+}
+
+.setup-accordion.open .setup-accordion-chevron {
+  transform: rotate(180deg);
+}
+
+.setup-accordion-body {
+  padding: 1.15rem;
+  border-top: 1px solid #eef2ec;
+  display: none;
+  background: #ffffff;
+}
+
+.setup-accordion.open .setup-accordion-body {
+  display: block;
+}
+
+/* Review Section */
+.setup-review-card {
+  background: #f8faf7;
+  border: 1px solid #dbe5d8;
+  border-radius: 14px;
+  padding: 1.2rem;
+  margin-top: 1.35rem;
+}
+
+.setup-review-heading {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #245c3a;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.85rem;
+}
+
+.setup-review-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+@media (max-width: 640px) {
+  .setup-review-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.setup-review-item {
+  background: #ffffff;
+  border: 1px solid #eef2ec;
+  border-radius: 10px;
+  padding: 0.75rem 0.95rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.setup-review-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.setup-review-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #778177;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.setup-review-val {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #1c261d;
+  word-break: break-word;
+}
+
+.btn-review-edit {
+  background: none;
+  border: none;
+  color: #245c3a;
+  font-size: 0.72rem;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-review-edit:hover {
+  background: #eaf3e7;
+  color: #1b4332;
+}
+
+/* Sticky Modal Footer */
+.profile-setup-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  background: #ffffff;
+  border-top: 1px solid #eef2ec;
+  padding: 1rem 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.btn-setup-secondary {
+  padding: 0.72rem 1.35rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: #f8faf7;
+  border: 1px solid #d2ded0;
+  color: #2c3a2e;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  min-height: 44px;
+}
+
+.btn-setup-secondary:hover {
+  background: #eaf3e7;
+  border-color: #245c3a;
+  color: #1b4332;
+}
+
+.btn-setup-primary {
+  padding: 0.75rem 1.6rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 800;
+  background: #1b4332;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(27, 67, 50, 0.22);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+}
+
+.btn-setup-primary:hover {
+  background: #143326;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(27, 67, 50, 0.28);
+}
+
+.btn-setup-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Success View */
+.setup-success-card {
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.15rem;
+  animation: success-bounce-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes success-bounce-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.setup-success-icon-box {
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background: #eaf3e7;
+  border: 1.5px solid #a3cfa0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #245c3a;
+}
+
+.setup-success-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #1b4332;
+  margin: 0;
+}
+
+.setup-success-desc {
+  font-size: 0.875rem;
+  color: #556658;
+  max-width: 440px;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Mobile Responsive Optimization */
+@media (max-width: 640px) {
+  .profile-setup-backdrop {
+    padding: 0;
+    align-items: flex-start;
+  }
+
+  .profile-setup-dialog {
+    max-width: 100%;
+    width: 100%;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .profile-setup-header {
+    padding: 1rem 1.25rem 0.85rem;
+  }
+
+  .profile-setup-title {
+    font-size: 1.1rem;
+  }
+
+  .profile-setup-stepper {
+    padding: 0.75rem 1.25rem;
+  }
+
+  .stepper-text {
+    font-size: 0.75rem !important;
+  }
+
+  .profile-setup-body {
+    padding: 1.25rem;
+  }
+
+  .profile-setup-footer {
+    padding: 0.85rem 1.25rem;
+  }
+
+  .setup-input-control {
+    font-size: 16px; /* Prevents auto-zoom on iOS */
+  }
+}
+
+

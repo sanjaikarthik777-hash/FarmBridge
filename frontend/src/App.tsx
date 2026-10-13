@@ -268,8 +268,7 @@ export function App() {
   };
 
   const handleNavigateToFarmer = () => {
-    setIsFarmerPortal(true);
-    window.history.pushState({ portal: 'farmer' }, '', '/farmer');
+    window.location.href = 'http://localhost:5000';
   };
 
   const handleNavigateToConsumer = () => {
@@ -497,9 +496,14 @@ export function App() {
 
   const unreadNotificationsCount = notifications.filter((n) => !n.is_read).length;
 
-  // Render the dedicated Farmer Portal when on /farmer route
+  // Redirect to the dedicated Offline Farmer Portal on port 5000 when on /farmer route
   if (isFarmerPortal) {
-    return <FarmerPortalGate onNavigateToConsumer={handleNavigateToConsumer} />;
+    window.location.href = 'http://localhost:5000';
+    return (
+      <div className="min-h-screen bg-[#F8F8F2] flex flex-col items-center justify-center gap-3 text-[#245C3A]">
+        <div className="text-sm font-bold">Redirecting to Farmer Portal on http://localhost:5000...</div>
+      </div>
+    );
   }
 
   return (
@@ -889,12 +893,14 @@ export function App() {
                   </button>
                 </li>
                 <li>
-                  <button
-                    onClick={handleNavigateToFarmer}
+                  <a
+                    href="http://localhost:5000"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="font-bold text-[#245C3A] hover:underline flex items-center gap-1 cursor-pointer"
                   >
-                    <span>🚜 Farmer Portal Console →</span>
-                  </button>
+                    <span>🚜 Farmer Portal App (Port 5000) →</span>
+                  </a>
                 </li>
                 <li className="pt-1">
                   <span className="inline-block text-[11px] leading-tight text-[#778177] bg-[#FAFBF7] p-2.5 rounded-xl border border-[#E5E9E1]">
